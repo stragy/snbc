@@ -1,0 +1,53 @@
+
+abstract class AppColors {
+  static const APP_ThEME = 0xff00a578;
+  static const Text_GRAY = 0xFF666666;
+  static const bg_GRAY = 0xFFE6E6E6;
+  static const BANTOU_BG = 0x90000000;
+  static const TEXT_WIT = 0xFFFFFFFF;
+  static const HOME_BG = 0xFFF5F6FA;
+  static const BLACK = 0xFF333333;
+  static const TEXT_HINT = 0xFF999999;
+  static const APP_ThEME1 = 0xFF5583FF;
+  static const WARN_BG = 0xFFFF8849;
+  static const TEXT_se = 0xFF808080;
+  static const RED_BG = 0xFFE25343;
+  static const RED_72 = 0xFF72BE2F;
+  static const ALERT_BG = 0xFFFFF9E5;
+
+  static const TEXT_PURPLE = 0xFFABB9FC;
+  static const TEXT_RED = 0xFFFF2A39;
+  static const TEXT_GREEN = 0xFF72BE2F;
+  static const TEXT_F7 = 0xFF7F7F7F;
+  static const TEXT_CC = 0xFFCCCCCC;
+  static const transparent = 0x00000000;
+  static const TEXT_101D = 0xFF101D37;
+  static const TEXT_EA = 0xFFEAF0FF;
+  static const TEXT_E5 = 0xFFE5E5E5;
+  static const TEXT_7A = 0xFF7A9EFF;
+  static const BG_F7B = 0xFFF7B14A;
+  static const BG_IMG = 0xFFE1E1E1;
+  static const TEXT_12 = 0xFF121212;
+  static const BG_F6 = 0xFFF6F6F6;
+  static const BG_EE = 0xFFEEEEEE;
+  static const TEXT_F4 = 0xFFF4FF00;
+  static const TEXT_37 = 0xFFFF3733;
+  static const BG_RED = 0xFFFF2A39;
+  static const BG_3C = 0xFF3C3C3C;
+  static const TEXT_FF = 0xFFFFFEFE;
+  static const BG_WHITE = 0xFFFFFFFF;
+  static const BORDER_RED = 0xFFFF2A39;
+  static const ICON_RED = 0xFFFF2A39;
+  static const TEXT_8849 = 0xFFFF8849;
+  static const ICON_GRAY = 0xFF666666;
+  static const BG_7A = 0xFF7A9EFF;
+  static const BG_55 = 0xFF5583FF;
+  static const TEXT_FD = 0xFFFDAA29;
+  static const TEXT_BLACK = 0xFF000000;
+  static const BG_B9 = 0xFFB9CCD7;
+  static const BG_FD = 0xFFFDAA29;
+  static const TEXT_F5 = 0xFFF5F6FA;
+  static const ICON_F5 = 0xFFF5F6FA;
+  static const TEXT_4949 = 0xFFFF4949;
+  static const BG_GREY = 0xFFF5F6FA;
+}

@@ -1,0 +1,71 @@
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+apply plugin: 'com.android.application'
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+android {
+    compileSdkVersion 31
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId "com.lecheng.baicaogarden"
+        minSdkVersion 21
+        targetSdkVersion 31
+        versionCode 14
+        versionName "20230821"
+        multiDexEnabled true
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("F:\\android\\AndroidStudioProjects\\bct_new\\android\\app\\bct.jks")
+            // storeFile file("/home/jeremiah/code-data/key/IntelligentCity/heixiu.jks")
+            storePassword "123456"
+            keyAlias "baicaotang"
+            keyPassword "123456"
+        }
+//        debug {//debug版签名配置
+//            storeFile file("D:\\AndroidStudioProjects\\BaicaoGarden\\app\\bct.jks")
+//            // storeFile file("/home/jeremiah/code-data/key/IntelligentCity/heixiu.jks")
+//            storePassword "123456"
+//            keyAlias "baicaotang"
+//            keyPassword "123456"
+//        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            debuggable true
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.release
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
