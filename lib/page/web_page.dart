@@ -1,7 +1,6 @@
 import 'package:bct_flutter/constants/colors.dart';
 import 'package:bct_flutter/page/widget/dialog_share.dart';
 import 'package:bct_flutter/utils/ui_util.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -48,11 +47,11 @@ class _WebPage extends State<WebPage> {
         centerTitle: true,
         title: Text(name),
         leading: IconButton(
-          icon:  CachedNetworkImage(
+          icon:  Image.network(
+            "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
             width: 11,
             height: 19,
             fit: BoxFit.fill,
-            imageUrl: "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
           ),
           onPressed: () {
             Navigator.pop(context, "refresh");

@@ -5,7 +5,6 @@ import 'package:bct_flutter/page/widget/BlankToolBarTool.dart';
 import 'package:bct_flutter/page/widget/TimerCountDownWidget.dart';
 import 'package:bct_flutter/utils/DataUtils.dart';
 import 'package:bct_flutter/utils/EventBus.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
@@ -110,12 +109,11 @@ class _RegisterPageState extends State<RegisterPage> {
               elevation: 0,
               //去掉Appbar底部阴影
               leading: IconButton(
-                  icon: CachedNetworkImage(
+                  icon: Image.network(
+                    "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
                     width: 11,
                     height: 19,
                     fit: BoxFit.fill,
-                    imageUrl:
-                        "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
                   ),
                   onPressed: () {
                     Navigator.pop(context);
@@ -192,12 +190,11 @@ class _RegisterPageState extends State<RegisterPage> {
                                       top: ScreenUtil().setWidth(28)),
                                   width: ScreenUtil().setWidth(60),
                                   alignment: Alignment.centerRight,
-                                  child: CachedNetworkImage(
+                                  child: Image.network( "http://snbc.zglcwl.com/Public/fontImages/del_login_icon.png",
                                     width: ScreenUtil().setWidth(32),
                                     height: ScreenUtil().setWidth(32),
                                     fit: BoxFit.fill,
-                                    imageUrl:
-                                        "http://snbc.zglcwl.com/Public/fontImages/del_login_icon.png",
+
                                   ),
                                 ),
                               )),
@@ -339,13 +336,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                               top: ScreenUtil().setWidth(28)),
                                           width: ScreenUtil().setWidth(60),
                                           alignment: Alignment.centerRight,
-                                          child: CachedNetworkImage(
+                                          child: Image.network( _onSeeIndex == 0
+                                              ? "http://snbc.zglcwl.com/Public/fontImages/login_unsee_icon.png"
+                                              : "http://snbc.zglcwl.com/Public/fontImages/login_see_icon.png",
                                             width: ScreenUtil().setWidth(40),
                                             height: ScreenUtil().setWidth(40),
                                             fit: BoxFit.fill,
-                                            imageUrl: _onSeeIndex == 0
-                                                ? "http://snbc.zglcwl.com/Public/fontImages/login_unsee_icon.png"
-                                                : "http://snbc.zglcwl.com/Public/fontImages/login_see_icon.png",
                                           ),
                                         ),
                                       )),
@@ -413,13 +409,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                               top: ScreenUtil().setWidth(28)),
                                           width: ScreenUtil().setWidth(60),
                                           alignment: Alignment.centerRight,
-                                          child: CachedNetworkImage(
+                                          child: Image.network(_onSeeIndex == 0
+                                              ? "http://snbc.zglcwl.com/Public/fontImages/login_unsee_icon.png"
+                                              : "http://snbc.zglcwl.com/Public/fontImages/login_see_icon.png",
                                             width: ScreenUtil().setWidth(40),
                                             height: ScreenUtil().setWidth(40),
                                             fit: BoxFit.fill,
-                                            imageUrl: _onSeeIndex == 0
-                                                ? "http://snbc.zglcwl.com/Public/fontImages/login_unsee_icon.png"
-                                                : "http://snbc.zglcwl.com/Public/fontImages/login_see_icon.png",
                                           ),
                                         ),
                                       )),
@@ -449,13 +444,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                       child: Container(
                                           height: ScreenUtil().setWidth(30),
                                           width: ScreenUtil().setWidth(30),
-                                          child: CachedNetworkImage(
+                                          child: Image.network(setall
+                                              ? "http://snbc.zglcwl.com/Public/fontImages/dele_in_icon.png"
+                                              : "http://snbc.zglcwl.com/Public/fontImages/dele_un_icon.png",
                                             width: ScreenUtil().setWidth(30),
                                             height: ScreenUtil().setWidth(30),
                                             fit: BoxFit.fill,
-                                            imageUrl: setall
-                                                ? "http://snbc.zglcwl.com/Public/fontImages/dele_in_icon.png"
-                                                : "http://snbc.zglcwl.com/Public/fontImages/dele_un_icon.png",
                                           ))),
                                   Container(
                                     margin: EdgeInsets.only(

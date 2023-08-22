@@ -4,7 +4,6 @@ import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:bct_flutter/constants/colors.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -85,11 +84,11 @@ class _CataloguePageState extends State<CataloguePage> {
         elevation: 0,
         //去掉Appbar底部阴影
         leading: IconButton(
-            icon:  CachedNetworkImage(
+            icon:  Image.network(
+              "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
               width: 11,
               height: 19,
               fit: BoxFit.fill,
-              imageUrl: "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -134,12 +133,10 @@ class _CataloguePageState extends State<CataloguePage> {
                         )),
                     InkWell(
                       child: Container(
-                        child: CachedNetworkImage(
+                        child: Image.network( "http://snbc.zglcwl.com/Public/fontImages/downloader_n.png",
                           width: 20,
                           height: 20,
                           fit: BoxFit.fill,
-                          imageUrl:
-                              "http://snbc.zglcwl.com/Public/fontImages/downloader_n.png",
                         ),
                         margin: EdgeInsets.only(right: 15),
                       ),

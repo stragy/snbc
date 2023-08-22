@@ -1,15 +1,9 @@
 import 'package:bct_flutter/constants/colors.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
 class ListCell extends StatelessWidget {
-  ListCell(
-      {Key key,
-      this.icon,
-      this.title,
-      this.onTap,
-      this.isDivider = false})
+  ListCell({Key key, this.icon, this.title, this.onTap, this.isDivider = false})
       : super(key: key);
 
   final bool isDivider;
@@ -36,11 +30,12 @@ class ListCell extends StatelessWidget {
                             )
                           : Container(
                               padding: EdgeInsets.only(left: 15, right: 10),
-                              child: CachedNetworkImage(
-                                width: 23,
-                                height: 23,
-                                imageUrl: "http://snbc.zglcwl.com/Public/fontImages"+icon,
+                              child: Image.network(
+                                "http://snbc.zglcwl.com/Public/fontImages" +
+                                    icon,
                               ),
+                              width: 23,
+                              height: 23,
                             ),
                       Text(
                         this.title,
@@ -49,11 +44,11 @@ class ListCell extends StatelessWidget {
                     ],
                   ),
                   Container(
-                    child: CachedNetworkImage(
-                    width: 16,
-                    height: 16,
-                    imageUrl: "http://snbc.zglcwl.com/Public/fontImages/button_next.png",
-                  ),
+                    child: Image.network(
+                      "http://snbc.zglcwl.com/Public/fontImages/button_next.png",
+                      width: 16,
+                      height: 16,
+                    ),
                     padding: EdgeInsets.only(left: 15, right: 15),
                   )
                 ],
@@ -62,7 +57,7 @@ class ListCell extends StatelessWidget {
             ),
             Divider(
               color:
-                  this.isDivider ?  Color(AppColors.BG_EE) : Colors.transparent,
+                  this.isDivider ? Color(AppColors.BG_EE) : Colors.transparent,
               height: 1,
             )
           ],

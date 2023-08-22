@@ -10,25 +10,22 @@ import 'package:bct_flutter/page/enterprise_zone_view.dart';
 import 'package:bct_flutter/page/login_page.dart';
 import 'package:bct_flutter/page/widget/choose_dialog_template.dart';
 import 'package:bct_flutter/page/widget/down_dialog.dart';
-import 'package:bct_flutter/page/widget/xieyi_dialog.dart';
 import 'package:bct_flutter/utils/DataUtils.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_downloader/flutter_downloader.dart'
+    as flutter_downloader;
 import 'package:flutter_pangle_ads/flutter_pangle_ads.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:install_plugin/install_plugin.dart';
 import 'package:package_info/package_info.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_downloader/flutter_downloader.dart'
-    as flutter_downloader;
+
+import 'MyView.dart';
 import 'academic_information_view.dart';
 import 'home_view.dart';
-import 'MyView.dart';
 
 class HomePage extends StatefulWidget {
   HomePage();
@@ -131,8 +128,8 @@ class _HomeShopPageState extends State<HomePage> {
                             }
 
                             InstallPlugin.installApk(
-                                    _apkFilePath,)
-                                .then((result) {
+                              _apkFilePath,
+                            ).then((result) {
                               print('install apk $result');
                             }).catchError((error) {
                               print('install apk error: $error');
@@ -215,12 +212,12 @@ class _HomeShopPageState extends State<HomePage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Container(
-                                  child: CachedNetworkImage(
-                                    width: ScreenUtil().setWidth(48),
-                                    height: ScreenUtil().setWidth(48),
-                                    imageUrl: _index == 0
+                                  child: Image.network(
+                                    _index == 0
                                         ? "http://snbc.zglcwl.com/Public/fontImages/tab_home_n.png"
                                         : "http://snbc.zglcwl.com/Public/fontImages/tab_home_h.png",
+                                    width: ScreenUtil().setWidth(48),
+                                    height: ScreenUtil().setWidth(48),
                                   ),
                                 ),
                                 Text("在线课程",
@@ -246,12 +243,12 @@ class _HomeShopPageState extends State<HomePage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Container(
-                                  child: CachedNetworkImage(
-                                    width: ScreenUtil().setWidth(48),
-                                    height: ScreenUtil().setWidth(48),
-                                    imageUrl: _index == 1
+                                  child: Image.network(
+                                    _index == 1
                                         ? "http://snbc.zglcwl.com/Public/fontImages/tab_msg_n.png"
                                         : "http://snbc.zglcwl.com/Public/fontImages/tab_msg_h.png",
+                                    width: ScreenUtil().setWidth(48),
+                                    height: ScreenUtil().setWidth(48),
                                   ),
                                 ),
                                 Text("学术资料",
@@ -277,12 +274,12 @@ class _HomeShopPageState extends State<HomePage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Container(
-                                  child: CachedNetworkImage(
-                                    width: ScreenUtil().setWidth(48),
-                                    height: ScreenUtil().setWidth(48),
-                                    imageUrl: _index == 2
+                                  child: Image.network(
+                                    _index == 2
                                         ? "http://snbc.zglcwl.com/Public/fontImages/tab_qiye_h.png"
                                         : "http://snbc.zglcwl.com/Public/fontImages/tab_qiye_n.png",
+                                    width: ScreenUtil().setWidth(48),
+                                    height: ScreenUtil().setWidth(48),
                                   ),
                                 ),
                                 Text("企业专区",
@@ -299,7 +296,7 @@ class _HomeShopPageState extends State<HomePage> {
                         GestureDetector(
                           onTap: () {
                             DataUtils.isLogin().then((value) {
-                              if (value) {
+                              if (value!=null&&value) {
                                 setState(() {
                                   _index = 3;
                                 });
@@ -317,12 +314,12 @@ class _HomeShopPageState extends State<HomePage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Container(
-                                  child: CachedNetworkImage(
-                                    width: ScreenUtil().setWidth(48),
-                                    height: ScreenUtil().setWidth(48),
-                                    imageUrl: _index == 3
+                                  child: Image.network(
+                                    _index == 3
                                         ? "http://snbc.zglcwl.com/Public/fontImages/tab_my_n.png"
                                         : "http://snbc.zglcwl.com/Public/fontImages/tab_my_h.png",
+                                    width: 24,
+                                    height: 24,
                                   ),
                                 ),
                                 Text("个人中心",
@@ -353,8 +350,6 @@ class _HomeShopPageState extends State<HomePage> {
                       _eachView[3]
                     ],
                   )),
-
-
                 ],
               )),
           onWillPop: () {

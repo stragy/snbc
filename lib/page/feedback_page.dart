@@ -4,11 +4,9 @@ import 'dart:typed_data';
 import 'package:bct_flutter/constants/colors.dart';
 import 'package:bct_flutter/network/network.dart';
 import 'package:bct_flutter/utils/DataUtils.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
@@ -29,11 +27,11 @@ class _FeedbackPageState extends State<FeedbackPage> {
               elevation: 0,
               //去掉Appbar底部阴影
               leading: IconButton(
-                  icon:  CachedNetworkImage(
+                  icon:  Image.network(
+                    "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
                     width: 11,
                     height: 19,
                     fit: BoxFit.fill,
-                    imageUrl: "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
                   ),
                   onPressed: () {
                     Navigator.pop(context);
@@ -180,8 +178,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
     }
     return GestureDetector(
       child: Container(
-        child: CachedNetworkImage(
-            imageUrl:
+        child: Image.network(
                 "http://snbc.zglcwl.com/Public/fontImages/opinion_addimg.png"),
       ),
       onTap: () {

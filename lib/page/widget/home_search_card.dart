@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class HomeSearchCardWidget extends StatefulWidget {
@@ -86,10 +85,10 @@ class _HomeSearchCardWidgetState extends State<HomeSearchCardWidget> {
                 widget.isShowLeading
                     ? Padding(
                   padding: EdgeInsets.only(right: 5, top: 0, left: 10),
-                  child:  CachedNetworkImage(
+                  child:  Image.network(
+                    "http://snbc.zglcwl.com/Public/fontImages/search_icon.png",
                     width: 15,
                     height: 15,
-                    imageUrl: "http://snbc.zglcwl.com/Public/fontImages/search_icon.png",
                   ),
                 )
                     : SizedBox(

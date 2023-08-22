@@ -4,7 +4,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bct_flutter/constants/colors.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -108,11 +107,11 @@ class _DownloadPageState extends State<DownloadPage> {
         elevation: 0,
         //去掉Appbar底部阴影
         leading: IconButton(
-            icon:  CachedNetworkImage(
+            icon:  Image.network(
+              "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
               width: 11,
               height: 19,
               fit: BoxFit.fill,
-              imageUrl: "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -368,11 +367,10 @@ class DownloadItem extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  data.task.imageUrl!=null? CachedNetworkImage(
+                  data.task.imageUrl!=null? Image.network(data.task.imageUrl,
                     width: 90,
                     height: 60,
                     fit: BoxFit.cover,
-                    imageUrl: data.task.imageUrl,
                   ):SizedBox(),
                   Expanded(
                     child: Text(
@@ -413,12 +411,11 @@ class DownloadItem extends StatelessWidget {
         onPressed: () {
           onAtionClick(task);
         },
-        child:  CachedNetworkImage(
+        child:  Image.network(  "http://snbc.zglcwl.com/Public/fontImages/downloader_n.png",
           width: 20,
           height: 20,
           fit: BoxFit.fill,
-          imageUrl:
-          "http://snbc.zglcwl.com/Public/fontImages/downloader_n.png",
+
         ),
         shape: CircleBorder(),
         constraints: BoxConstraints(minHeight: 32.0, minWidth: 32.0),
@@ -428,12 +425,11 @@ class DownloadItem extends StatelessWidget {
         onPressed: () {
           onAtionClick(task);
         },
-        child:  CachedNetworkImage(
+        child:  Image.network(          "http://snbc.zglcwl.com/Public/fontImages/pause.png",
+
           width: 20,
           height: 20,
           fit: BoxFit.fill,
-          imageUrl:
-          "http://snbc.zglcwl.com/Public/fontImages/pause.png",
         ),
         shape: CircleBorder(),
         constraints: BoxConstraints(minHeight: 32.0, minWidth: 32.0),
@@ -443,12 +439,11 @@ class DownloadItem extends StatelessWidget {
         onPressed: () {
           onAtionClick(task);
         },
-        child: CachedNetworkImage(
+        child: Image.network(          "http://snbc.zglcwl.com/Public/fontImages/play.png",
+
           width: 20,
           height: 20,
           fit: BoxFit.fill,
-          imageUrl:
-          "http://snbc.zglcwl.com/Public/fontImages/play.png",
         ),
         shape: CircleBorder(),
         constraints: BoxConstraints(minHeight: 32.0, minWidth: 32.0),
@@ -466,12 +461,11 @@ class DownloadItem extends StatelessWidget {
             onPressed: () {
               onAtionClick(task);
             },
-            child: CachedNetworkImage(
+            child: Image.network(              "http://snbc.zglcwl.com/Public/fontImages/delete_img.png",
+
               width: 20,
               height: 20,
               fit: BoxFit.fill,
-              imageUrl:
-              "http://snbc.zglcwl.com/Public/fontImages/delete_img.png",
             ),
             shape: CircleBorder(),
             constraints: BoxConstraints(minHeight: 32.0, minWidth: 32.0),
@@ -490,12 +484,11 @@ class DownloadItem extends StatelessWidget {
             onPressed: () {
               onAtionClick(task);
             },
-            child:  CachedNetworkImage(
+            child:  Image.network(              "http://snbc.zglcwl.com/Public/fontImages/refresh.png",
+
               width: 20,
               height: 20,
               fit: BoxFit.fill,
-              imageUrl:
-              "http://snbc.zglcwl.com/Public/fontImages/refresh.png",
             ),
             shape: CircleBorder(),
             constraints: BoxConstraints(minHeight: 32.0, minWidth: 32.0),

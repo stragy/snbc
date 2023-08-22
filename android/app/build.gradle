@@ -33,7 +33,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 31
         versionCode 14
-        versionName "20230821"
+        versionName "20230822"
         multiDexEnabled true
     }
 
@@ -55,14 +55,28 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            minifyEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 //            debuggable true
             signingConfig signingConfigs.release
         }
         debug {
             signingConfig signingConfigs.release
         }
+    }
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+    repositories {
+        flatDir {
+            dirs 'libs'  // 声明添加libs文件夹为库
+
+        }
+
+    }
+    dexOptions {
+        javaMaxHeapSize "4g"
     }
 }
 

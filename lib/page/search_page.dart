@@ -1,7 +1,6 @@
 import 'package:bct_flutter/constants/colors.dart';
 import 'package:bct_flutter/network/network.dart';
 import 'package:bct_flutter/page/widget/course_classify_widget.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 
@@ -57,11 +56,11 @@ class _SearchPageState extends State<SearchPage> {
               elevation: 0,
               //去掉Appbar底部阴影
               leading: IconButton(
-                  icon:  CachedNetworkImage(
+                  icon:Image.network(
+                    "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
                     width: 11,
                     height: 19,
                     fit: BoxFit.fill,
-                    imageUrl: "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
                   ),
                   onPressed: () {
                     Navigator.pop(context);

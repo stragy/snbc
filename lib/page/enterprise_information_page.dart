@@ -6,7 +6,6 @@ import 'package:bct_flutter/page/case_share_page.dart';
 import 'package:bct_flutter/page/course_classify_detail_page.dart';
 import 'package:bct_flutter/page/web_page.dart';
 import 'package:bct_flutter/utils/ui_util.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 
@@ -62,11 +61,10 @@ class _EnterpriseInformationPageState extends State<EnterpriseInformationPage>
         appBar: AppBar(
           backgroundColor: Color(AppColors.APP_ThEME),
           leading: IconButton(
-              icon:  CachedNetworkImage(
+              icon:  Image.network( "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
                 width: 11,
                 height: 19,
                 fit: BoxFit.fill,
-                imageUrl: "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
               ),
               onPressed: () {
                 Navigator.pop(context);
@@ -98,10 +96,9 @@ class _EnterpriseInformationPageState extends State<EnterpriseInformationPage>
                               borderRadius:
                                   BorderRadius.all(Radius.circular(30)),
                               child: model != null && model.head != null
-                                  ? CachedNetworkImage(
+                                  ? Image.network( model.head,
                                       width: 55,
                                       height: 55,
-                                      imageUrl: model.head,
                                     )
                                   : SizedBox(),
                             ),

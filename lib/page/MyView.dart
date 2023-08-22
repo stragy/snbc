@@ -6,7 +6,6 @@ import 'package:bct_flutter/page/widget/choose_dialog_template.dart';
 import 'package:bct_flutter/page/widget/list_cell.dart';
 import 'package:bct_flutter/utils/DataUtils.dart';
 import 'package:bct_flutter/utils/EventBus.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -104,13 +103,12 @@ class _MyViewState extends State<MyView> {
                     Container(
                       child: ClipRRect(
                         borderRadius: BorderRadius.all(Radius.circular(28)),
-                        child: CachedNetworkImage(
+                        child: Image.network( head != null
+                            ? head
+                            : "http://snbc.zglcwl.com/Public/fontImages/head_dis.png",
                           width: ScreenUtil().setWidth(100),
                           height: ScreenUtil().setWidth(100),
                           fit: BoxFit.fill,
-                          imageUrl: head != null
-                              ? head
-                              : "http://snbc.zglcwl.com/Public/fontImages/head_dis.png",
                           //广告图片地址
 //                                            placeholder: (context, url) => _buildSplashBg(),
 //                                            errorWidget: (context, url, error) => _buildSplashBg(),
@@ -140,12 +138,12 @@ class _MyViewState extends State<MyView> {
                     )),
                     GestureDetector(
                       child: Container(
-                        child: CachedNetworkImage(
+                        child: Image.network(
+                          "http://snbc.zglcwl.com/Public/fontImages/my_next.png",
+                        ),
                           width: 15,
                           height: 20,
-                          imageUrl:
-                              "http://snbc.zglcwl.com/Public/fontImages/my_next.png",
-                        ),
+
                         margin: EdgeInsets.only(top: 10, right: 15),
                       ),
                       onTap: () {

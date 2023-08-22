@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bct_flutter/constants/colors.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fluwx/fluwx.dart';
 import 'package:fluwx/fluwx.dart' as fluwx;
@@ -50,11 +49,10 @@ class _DialogShare extends State<DialogShare> {
                       margin: EdgeInsets.only(top: 15, left: 15, bottom: 5),
                       child: new Column(
                         children: <Widget>[
-                          CachedNetworkImage(
+                          Image.network("http://snbc.zglcwl.com/Public/fontImages/wechat_img.png",
                             width: 52,
                             height: 52,
                             fit: BoxFit.fill,
-                            imageUrl: "http://snbc.zglcwl.com/Public/fontImages/wechat_img.png",
                           ),
                           Container(
                             margin: EdgeInsets.only(
@@ -80,11 +78,10 @@ class _DialogShare extends State<DialogShare> {
                       margin: EdgeInsets.only(top: 10, left: 30),
                       child: new Column(
                         children: <Widget>[
-                          CachedNetworkImage(
+                          Image.network("http://snbc.zglcwl.com/Public/fontImages/circle_of_friends.png",
                             width: 52,
                             height: 52,
                             fit: BoxFit.fill,
-                            imageUrl: "http://snbc.zglcwl.com/Public/fontImages/circle_of_friends.png",
                           ),
                           Container(
                             margin: EdgeInsets.only(

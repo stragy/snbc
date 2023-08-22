@@ -2,7 +2,6 @@ import 'package:bct_flutter/constants/colors.dart';
 import 'package:bct_flutter/network/network.dart';
 import 'package:bct_flutter/page/web_page.dart';
 import 'package:bct_flutter/utils/DataUtils.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -60,9 +59,8 @@ class _MarketSurveyPageState extends State<MarketSurveyPage> {
                       height: 60,
                       margin: EdgeInsets.only(
                           left: 15, top: 10, bottom: 10, right: 10),
-                      child: CachedNetworkImage(
+                      child: Image.network( list[index]['head'],
                         fit: BoxFit.cover,
-                        imageUrl: list[index]['head'],
                       ),
                     ),
                     Column(

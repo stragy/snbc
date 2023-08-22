@@ -2,7 +2,6 @@ import 'package:bct_flutter/constants/colors.dart';
 import 'package:bct_flutter/model/article_model.dart';
 import 'package:bct_flutter/network/network.dart';
 import 'package:bct_flutter/utils/date_util.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -42,11 +41,11 @@ class _AcademicInformationDetailState
         elevation: 0,
         //去掉Appbar底部阴影
         leading: IconButton(
-            icon:  CachedNetworkImage(
+            icon:  Image.network(
+              "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
               width: 11,
               height: 19,
               fit: BoxFit.fill,
-              imageUrl: "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
             ),
             onPressed: () {
               Navigator.pop(context);

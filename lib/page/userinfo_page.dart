@@ -5,7 +5,6 @@ import 'package:bct_flutter/network/network.dart';
 import 'package:bct_flutter/page/widget/choose_dialog_template.dart';
 import 'package:bct_flutter/utils/DataUtils.dart';
 import 'package:bct_flutter/utils/EventBus.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -65,17 +64,16 @@ class _UserInfoPageState extends State<UserInfoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       appBar: AppBar(
         elevation: 0,
         //去掉Appbar底部阴影
         leading: IconButton(
-            icon: CachedNetworkImage(
+            icon: Image.network(
+              "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
               width: 11,
               height: 19,
               fit: BoxFit.fill,
-              imageUrl:
-                  "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -161,24 +159,23 @@ class _UserInfoPageState extends State<UserInfoPage> {
                                                 height:
                                                     ScreenUtil().setWidth(70),
                                               )
-                                            : CachedNetworkImage(
+                                            : Image.network(
+                                                userinfo['head'],
                                                 width:
                                                     ScreenUtil().setWidth(80),
                                                 height:
                                                     ScreenUtil().setWidth(80),
                                                 fit: BoxFit.fill,
-                                                imageUrl: userinfo['head'],
                                                 //广告图片地址
 //                                            placeholder: (context, url) => _buildSplashBg(),
 //                                            errorWidget: (context, url, error) => _buildSplashBg(),
                                               ),
                                       ),
                                     ),
-                                    CachedNetworkImage(
+                                    Image.network("http://snbc.zglcwl.com/Public/fontImages/button_next.png",
                                       width: 16,
                                       height: 16,
-                                      imageUrl:
-                                          "http://snbc.zglcwl.com/Public/fontImages/button_next.png",
+
                                     )
                                   ],
                                 ))),
@@ -237,11 +234,10 @@ class _UserInfoPageState extends State<UserInfoPage> {
                                         decoration: TextDecoration.none),
                                   ),
                                 ),
-                                CachedNetworkImage(
+                                Image.network(                                      "http://snbc.zglcwl.com/Public/fontImages/button_next.png",
+
                                   width: 16,
                                   height: 16,
-                                  imageUrl:
-                                      "http://snbc.zglcwl.com/Public/fontImages/button_next.png",
                                 )
                               ],
                             ))),
@@ -307,11 +303,10 @@ class _UserInfoPageState extends State<UserInfoPage> {
                                         decoration: TextDecoration.none),
                                   ),
                                 ),
-                                CachedNetworkImage(
+                                Image.network(                                      "http://snbc.zglcwl.com/Public/fontImages/button_next.png",
+
                                   width: 16,
                                   height: 16,
-                                  imageUrl:
-                                      "http://snbc.zglcwl.com/Public/fontImages/button_next.png",
                                 )
                               ],
                             )),
@@ -374,11 +369,10 @@ class _UserInfoPageState extends State<UserInfoPage> {
                                         decoration: TextDecoration.none),
                                   ),
                                 ),
-                                CachedNetworkImage(
+                                Image.network(  "http://snbc.zglcwl.com/Public/fontImages/button_next.png",
                                   width: 16,
                                   height: 16,
-                                  imageUrl:
-                                      "http://snbc.zglcwl.com/Public/fontImages/button_next.png",
+
                                 )
                               ],
                             )),
@@ -461,10 +455,11 @@ class _UserInfoPageState extends State<UserInfoPage> {
       }, params: formData);
     });
   }
+
   _login() async {
     // 打开登录页并处理登录成功的回调
     final result =
-    await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+        await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return LoginPage();
     }));
     // result为"refresh"代表登录成功
@@ -475,6 +470,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
       bus.send("updateui", "8");
     }
   }
+
   static void showStringPicker<T>(
     BuildContext context, {
     @required List<T> data,

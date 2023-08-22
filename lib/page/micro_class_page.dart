@@ -1,7 +1,6 @@
 import 'package:bct_flutter/constants/colors.dart';
 import 'package:bct_flutter/network/network.dart';
 import 'package:bct_flutter/page/course_classify_detail_page.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -67,8 +66,8 @@ class _MicroClassPageState extends State<MicroClassPage> {
                 children: [
                   Container(
                     height: 100,
-                    child: CachedNetworkImage(
-                      imageUrl: list[index]['video_img'],
+                    child: Image.network(
+               list[index]['video_img'],
                       fit: BoxFit.cover,
                     ),
                     margin: EdgeInsets.only(bottom: 10),

@@ -4,7 +4,6 @@ import 'package:bct_flutter/network/network.dart';
 import 'package:bct_flutter/network/request.dart';
 import 'package:bct_flutter/page/academic_information_detail_page.dart';
 import 'package:bct_flutter/utils/ui_util.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
@@ -87,10 +86,9 @@ class _AcademicInformationViewState extends State<AcademicInformationView> {
                         children: [
                           Row(
                             children: [
-                              CachedNetworkImage(
+                              Image.network(list[index].article_img,
                                 width: 100,
                                 height: 70,
-                                imageUrl: list[index].article_img,
                               ),
                               Expanded(
                                   child: Column(
@@ -126,12 +124,11 @@ class _AcademicInformationViewState extends State<AcademicInformationView> {
                                                 MainAxisAlignment.end,
                                             children: [
                                               Container(
-                                                child: CachedNetworkImage(
+                                                child: Image.network(  "http://snbc.zglcwl.com/Public/fontImages/eyes.png",
                                                   width: 20,
                                                   height: 20,
                                                   fit: BoxFit.fill,
-                                                  imageUrl:
-                                                      "http://snbc.zglcwl.com/Public/fontImages/eyes.png",
+
                                                 ),
                                               ),
                                               Text("${list[index].article_see}",

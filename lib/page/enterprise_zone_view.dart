@@ -2,7 +2,6 @@ import 'package:bct_flutter/constants/colors.dart';
 import 'package:bct_flutter/model/enterprise_model.dart';
 import 'package:bct_flutter/network/network.dart';
 import 'package:bct_flutter/page/enterprise_information_page.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
@@ -94,10 +93,9 @@ class _EnterpriseZoneViewState extends State<EnterpriseZoneView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                child: CachedNetworkImage(
+                                child: Image.network(list[index].head,
                                   width: 55,
                                   height: 43,
-                                  imageUrl: list[index].head,
                                 ),
                                 margin: EdgeInsets.only(
                                     left: 10, right: 10, top: 15),
@@ -158,9 +156,8 @@ class _EnterpriseZoneViewState extends State<EnterpriseZoneView> {
                             ],
                           ),
                           Container(
-                            child: CachedNetworkImage(
+                            child: Image.network(list[index].img,
                               height: 130,
-                              imageUrl: list[index].img,
                             ),
                             margin: EdgeInsets.only(
                                 left: 10, right: 10, top: 10, bottom: 10),
