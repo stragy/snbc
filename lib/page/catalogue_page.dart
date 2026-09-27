@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:bct_flutter/constants/colors.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -12,29 +12,23 @@ import 'package:path_provider/path_provider.dart';
 const debug = true;
 
 class CataloguePage extends StatefulWidget {
-  CataloguePage({
-    @required this.list,
+  const CataloguePage({
+    super.key,
+    required this.list,
   });
 
-  var list;
+  final List<dynamic> list;
 
   @override
-  _CataloguePageState createState() => _CataloguePageState(list: list);
+  State<CataloguePage> createState() => _CataloguePageState();
 }
 
 class _CataloguePageState extends State<CataloguePage> {
-  _CataloguePageState({
-    @required this.list,
-  });
-
-  var list;
-
   //存储路径
-  String _localPath;
+  String _localPath = '';
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     //注册下载回调
     FlutterDownloader.registerCallback(downloadCallback);
@@ -42,9 +36,9 @@ class _CataloguePageState extends State<CataloguePage> {
   }
 
   //加载任务、权限、下载项目等
-  Future<Null> _prepare() async {
-    _localPath = (await _findLocalPath()) + Platform.pathSeparator + 'Download';
-    print(_localPath);
+  Future<void> _prepare() async {
+    _localPath = '${await _findLocalPath()}${Platform.pathSeparator}Download';
+    if (debug) debugPrint(_localPath);
     //savedDir下载文件存储位置
     final savedDir = Directory(_localPath);
     //判断目录是否存在
@@ -56,15 +50,14 @@ class _CataloguePageState extends State<CataloguePage> {
   }
 
   //下载回调
-  static void downloadCallback(
-      String id, DownloadTaskStatus status, int progress) {
+  @pragma('vm:entry-point')
+  static void downloadCallback(String id, int status, int progress) {
     if (debug) {
-      print(
+      debugPrint(
           'Background Isolate Callback: task ($id) is in status ($status) and process ($progress)');
     }
-    final SendPort send =
-        IsolateNameServer.lookupPortByName('downloader_send_port');
-    send.send([id, status, progress]);
+    final send = IsolateNameServer.lookupPortByName('downloader_send_port');
+    send?.send([id, status, progress]);
   }
 
   //获取存储目录地址
@@ -84,7 +77,7 @@ class _CataloguePageState extends State<CataloguePage> {
         elevation: 0,
         //去掉Appbar底部阴影
         leading: IconButton(
-            icon:  Image.network(
+            icon: Image.network(
               "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
               width: 11,
               height: 19,
@@ -95,23 +88,23 @@ class _CataloguePageState extends State<CataloguePage> {
             }),
         automaticallyImplyLeading: true,
         title: Text('目录'),
-        backgroundColor: Color(AppColors.APP_ThEME),
+        backgroundColor: Color(AppColors.APP_THEME),
         centerTitle: true,
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         titleSpacing: NavigationToolbar.kMiddleSpacing,
         toolbarOpacity: 1.0,
         bottomOpacity: 1.0,
         primary: true,
       ),
       body: ListView.builder(
-          itemCount: list.length,
+          itemCount: widget.list.length,
           itemBuilder: (context, index) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   margin: EdgeInsets.only(left: 15, right: 15, top: 10),
-                  child: Text(list != null ? list[index]['video_title'] : "",
+                  child: Text(widget.list[index]['video_title'],
                       style: TextStyle(
                           color: Color(AppColors.TEXT_BLACK), fontSize: 16),
                       softWrap: true,
@@ -125,37 +118,39 @@ class _CataloguePageState extends State<CataloguePage> {
                         width: 300,
                         margin: EdgeInsets.only(left: 15, top: 5),
                         child: Text(
-                          list != null
-                              ? "本期主讲：${list[index]['video_lecturer']}"
-                              : "本期主讲：暂无",
+                          "本期主讲：${widget.list[index]['video_lecturer']}",
                           style: TextStyle(
                               fontSize: 14, color: Color(AppColors.Text_GRAY)),
                         )),
                     InkWell(
                       child: Container(
-                        child: Image.network( "http://snbc.zglcwl.com/Public/fontImages/downloader_n.png",
+                        margin: EdgeInsets.only(right: 15),
+                        child: Image.network(
+                          "http://snbc.zglcwl.com/Public/fontImages/downloader_n.png",
                           width: 20,
                           height: 20,
                           fit: BoxFit.fill,
                         ),
-                        margin: EdgeInsets.only(right: 15),
                       ),
                       onTap: () async {
-                        File pdf =
-                            File(_localPath + "/" + list[index]['video_title']);
+                        final title = widget.list[index]['video_title'];
+                        final url = widget.list[index]['video_url'];
+                        final pdf = File('$_localPath/$title');
 
-                        var exist = await pdf.exists();
-                        pdf.delete();
+                        final exist = await pdf.exists();
+                        if (!context.mounted) return;
+                        // pdf.delete();
                         if (exist) {
                           Fluttertoast.showToast(msg: "此视频已下载过!");
                         } else {
-                          FlutterDownloader.enqueue(
-                              url: list[index]['video_url'],
+                          await FlutterDownloader.enqueue(
+                              url: url,
                               savedDir: _localPath,
-                              // imageUrl: list[index]['video_img'],
-                              fileName: list[index]['video_title'],
+                              // imageUrl: widget.list[index]['video_img'],
+                              fileName: title,
                               showNotification: true,
                               openFileFromNotification: true);
+                          if (!context.mounted) return;
                           Navigator.pop(context);
                           Fluttertoast.showToast(msg: "请到我的下载中查看下载进度!");
                         }

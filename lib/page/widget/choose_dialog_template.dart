@@ -1,27 +1,22 @@
-import 'dart:io';
-import 'dart:ui';
-
 import 'package:bct_flutter/constants/colors.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/screenutil.dart';
-typedef cancelCallback = void Function();
-typedef confirmCallBack =void Function();
-Future<String> ChooseDialogTemplate(
-    {
-      @required BuildContext context,
-      String title = '提示',
-      Widget contentWidget,
-      String cancelText = '取消',
-      String confirmText = '确认',
-      int cancelColor = AppColors.Text_GRAY,
-      int confirmColor = AppColors.APP_ThEME1,
-      bool confirmNotPop = false,
-      cancelCallback,
-      confirmCallBack
-    }) {
-  List<Widget> _getContentList(context1) {
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+typedef CancelCallback = void Function();
+typedef ConfirmCallback = void Function();
+Future<void> chooseDialogTemplate({
+  required BuildContext context,
+  String? title,
+  required Widget contentWidget,
+  String cancelText = '取消',
+  String confirmText = '确认',
+  int cancelColor = AppColors.Text_GRAY,
+  int confirmColor = AppColors.APP_THEME_LIGHT,
+  bool confirmNotPop = false,
+  CancelCallback? cancelCallback,
+  ConfirmCallback? confirmCallBack,
+}) async {
+  List<Widget> getContentList(context1) {
     List<Widget> widgetList = [];
     if (title != null) {
       widgetList.add(Container(
@@ -49,8 +44,7 @@ Future<String> ChooseDialogTemplate(
             top: ScreenUtil().setWidth(36),
             bottom: ScreenUtil().setWidth(36),
             left: ScreenUtil().setWidth(20),
-            right: ScreenUtil().setWidth(20)
-        ),
+            right: ScreenUtil().setWidth(20)),
         child: contentWidget,
       ),
       Container(
@@ -64,8 +58,8 @@ Future<String> ChooseDialogTemplate(
           Expanded(
             flex: 1,
             child: InkWell(
-              onTap: (){
-                cancelCallback();
+              onTap: () {
+                cancelCallback?.call();
                 Navigator.pop(context1);
               },
               child: Container(
@@ -89,9 +83,9 @@ Future<String> ChooseDialogTemplate(
           Expanded(
               flex: 1,
               child: InkWell(
-                onTap: (){
+                onTap: () {
                   if (confirmNotPop == false) Navigator.pop(context1);
-                  confirmCallBack();
+                  confirmCallBack?.call();
                 },
                 child: Container(
                   height: ScreenUtil().setWidth(90),
@@ -104,16 +98,15 @@ Future<String> ChooseDialogTemplate(
                     ),
                   ),
                 ),
-              )
-          ),
+              )),
         ],
       )
     ]);
     return widgetList;
   }
+
   // 释放对象使用的资源
   showDialog<Null>(
-
     context: context,
     barrierDismissible: false,
     builder: (BuildContext context1) {
@@ -126,21 +119,20 @@ Future<String> ChooseDialogTemplate(
             child: SafeArea(
                 child: Center(
                     child: Container(
-                      width: ScreenUtil().setWidth(562),
-                      decoration: new BoxDecoration(
-                        color: Color(AppColors.TEXT_WIT),
-                        borderRadius: BorderRadius.all(
-                            Radius.circular(ScreenUtil().setWidth(12))),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: _getContentList(context1),
-                      ),
-                    ))),
+              width: ScreenUtil().setWidth(562),
+              decoration: BoxDecoration(
+                color: Color(AppColors.TEXT_WHITE),
+                borderRadius: BorderRadius.all(
+                    Radius.circular(ScreenUtil().setWidth(12))),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: getContentList(context1),
+              ),
+            ))),
           ),
         ],
       );
     },
   );
-  
 }

@@ -1,21 +1,20 @@
-import 'dart:ui';
 
 import 'package:bct_flutter/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class AppBarUtils {
   static AppBar appBar(String title, BuildContext context,
-      [Widget leading, List<Widget> actions]) {
+      [Widget? leading, List<Widget> actions = const []]) {
     void backAction() {
-      Navigator.pop(context,"refresh");
+      Navigator.pop(context, "refresh");
     }
 
     return AppBar(
-      backgroundColor: Color(AppColors.APP_ThEME),
+      backgroundColor: Color(AppColors.APP_THEME),
       title: Text(
         title,
         style: TextStyle(
-            color:  Colors.white,
+            color: Colors.white,
             fontWeight: FontWeight.w300,
             fontSize: 18,
             fontFamily: 'PingFang'),
@@ -23,8 +22,7 @@ class AppBarUtils {
       centerTitle: true,
       leading: leading ??
           IconButton(
-            icon: Icon(Icons.arrow_back_ios,
-                color: Colors.white, size: 20),
+            icon: Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
             onPressed: backAction,
           ),
       actions: actions,
@@ -45,5 +43,4 @@ class DeviceUtils {
   static double sreenHeight(BuildContext context) {
     return (MediaQuery.of(context).size.height);
   }
-
 }

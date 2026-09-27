@@ -1,10 +1,12 @@
 import 'package:bct_flutter/constants/colors.dart';
 import 'package:bct_flutter/utils/DataUtils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/screenutil.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-Future<String> DownDialog(context, path, localpath, name, con) {
-  showDialog<Null>(
+ // ignore: non_constant_identifier_names
+Future<String> DownDialog(BuildContext context, String path, String localpath, String name, String con) async {
+  await showDialog<String>(
     context: context,
     barrierDismissible: true,
     builder: (BuildContext context) {
@@ -21,8 +23,8 @@ Future<String> DownDialog(context, path, localpath, name, con) {
               padding: EdgeInsets.only(
                   top: ScreenUtil().setHeight(30),
                   bottom: ScreenUtil().setWidth(30)),
-              decoration: new BoxDecoration(
-                color: Color(AppColors.TEXT_WIT),
+              decoration: BoxDecoration(
+                color: Color(AppColors.TEXT_WHITE),
                 borderRadius: BorderRadius.all(
                     Radius.circular(ScreenUtil().setWidth(20))),
               ),
@@ -35,7 +37,7 @@ Future<String> DownDialog(context, path, localpath, name, con) {
                     child: Text(
                       '发现新版本',
                       style: TextStyle(
-                        color: Color(AppColors.APP_ThEME1),
+                        color: Color(AppColors.APP_THEME_LIGHT),
                         fontSize: ScreenUtil().setSp(44),
                       ),
                       textAlign: TextAlign.center,
@@ -48,7 +50,7 @@ Future<String> DownDialog(context, path, localpath, name, con) {
                         top: ScreenUtil().setWidth(30),
                         bottom: ScreenUtil().setWidth(10)),
                     child: Text(
-                      '最新版本V' + name,
+                      '最新版本V$name',
                       style: TextStyle(
                         color: Color(AppColors.TEXT_HINT),
                         fontSize: ScreenUtil().setSp(28),
@@ -75,7 +77,7 @@ Future<String> DownDialog(context, path, localpath, name, con) {
                         top: ScreenUtil().setWidth(12)),
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      con + "",
+                      con,
                       maxLines: 6,
                       style: TextStyle(
                         color: Color(AppColors.TEXT_HINT),
@@ -91,14 +93,23 @@ Future<String> DownDialog(context, path, localpath, name, con) {
                         width: ScreenUtil().setWidth(206),
                         height: ScreenUtil().setWidth(68),
                         decoration: BoxDecoration(
-                          border: new Border.all(
+                          border: Border.all(
                             width: 1,
                             color: Color(AppColors.TEXT_HINT),
                           ),
                           color: Color(AppColors.TEXT_HINT),
                           borderRadius: BorderRadius.all(Radius.circular(28.0)),
                         ),
-                        child: RaisedButton(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(AppColors.TEXT_WHITE),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(28.0),
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
                           child: Container(
                             alignment: Alignment.center,
                             child: Text(
@@ -110,14 +121,6 @@ Future<String> DownDialog(context, path, localpath, name, con) {
                               textAlign: TextAlign.center,
                             ),
                           ),
-                          color: Color(AppColors.TEXT_WIT),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(28.0),
-                          ), //圆角大小
                         ),
                       ),
                       Container(
@@ -126,7 +129,23 @@ Future<String> DownDialog(context, path, localpath, name, con) {
                             right: ScreenUtil().setHeight(23)),
                         width: ScreenUtil().setWidth(206),
                         height: ScreenUtil().setWidth(68),
-                        child: RaisedButton(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(AppColors.APP_THEME),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(28.0),
+                            ),
+                          ),
+                          onPressed: () async {
+                            final status = await Permission.storage.request();
+                            if (!context.mounted) return;
+                            if (status.isGranted) {
+                              DataUtils().downloadFile(path, localpath);
+                              Navigator.pop(context);
+                            } else {
+                              DataUtils.ShowTos("请先允许权限");
+                            }
+                          },
                           child: Container(
                             alignment: Alignment.center,
                             child: Text(
@@ -138,20 +157,6 @@ Future<String> DownDialog(context, path, localpath, name, con) {
                               textAlign: TextAlign.center,
                             ),
                           ),
-                          color: Color(AppColors.APP_ThEME),
-                          onPressed: () {
-                            DataUtils().checkPermission(context).then((value) {
-                              if (value) {
-                                DataUtils().downloadFile(path, localpath);
-                                Navigator.pop(context);
-                              } else {
-                                DataUtils.ShowTos("请先允许权限");
-                              }
-                            });
-                          },
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(28.0),
-                          ), //圆角大小
                         ),
                       ),
                     ],
@@ -164,4 +169,5 @@ Future<String> DownDialog(context, path, localpath, name, con) {
       );
     },
   );
+  return ""; // Return empty string as placeholder
 }

@@ -2,50 +2,52 @@ import 'package:bct_flutter/constants/colors.dart';
 import 'package:bct_flutter/network/network.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
 class MicroClassifyDetailPage extends StatefulWidget {
-  MicroClassifyDetailPage({
-    @required this.id,
-  });
+  const MicroClassifyDetailPage({super.key, required this.id});
 
-  var id;
+  final dynamic id;
 
   @override
-  _MicroClassifyDetailPageState createState() =>
-      _MicroClassifyDetailPageState(id: id);
+  State<MicroClassifyDetailPage> createState() =>
+      _MicroClassifyDetailPageState();
 }
 
 class _MicroClassifyDetailPageState extends State<MicroClassifyDetailPage> {
-  _MicroClassifyDetailPageState({
-    @required this.id,
-  });
-
-  var id;
-  bool _isFullscreen = false;
-  var data;
-  var videoUrl;
-  VideoPlayerController controller;
-  Future future;
+  final bool _isFullscreen = false;
+  Map<String, dynamic>? data;
+  String? videoUrl;
+  VideoPlayerController? controller;
+  Future<void>? future;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getDetail();
   }
 
-  getDetail() async {
-    FormData formData = new FormData.fromMap({
-      "id": id,
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
+  }
+
+  Future<void> getDetail() async {
+    FormData formData = FormData.fromMap({
+      "id": widget.id,
     });
     await Request.getInstance().post("/companyVideo", (data) async {
       // if (data['video'] != null && data['video'].length > 0)
       //   this.data = data['video'];
       // list = data["course"];
       this.data = data;
-      controller = VideoPlayerController.network(this.data['video_url']);
-      future = controller.initialize();
+      final String urlStr = (this.data?['video_url']?.toString() ?? '');
+      if (urlStr.isNotEmpty) {
+        controller = VideoPlayerController.networkUrl(Uri.parse(urlStr));
+        future = controller!.initialize();
+      }
       setState(() {});
     }, params: formData);
   }
@@ -55,13 +57,13 @@ class _MicroClassifyDetailPageState extends State<MicroClassifyDetailPage> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: _isFullscreen
-            ? PreferredSize(child: AppBar(), preferredSize: Size.fromHeight(0))
+            ? PreferredSize(preferredSize: Size.fromHeight(0), child: AppBar())
             : AppBar(
                 elevation: 0,
                 //去掉Appbar底部阴影
                 leading: IconButton(
-                    icon: Image.network(                          "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
-
+                    icon: Image.network(
+                      "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
                       width: 11,
                       height: 19,
                       fit: BoxFit.fill,
@@ -71,9 +73,9 @@ class _MicroClassifyDetailPageState extends State<MicroClassifyDetailPage> {
                     }),
                 automaticallyImplyLeading: true,
                 title: Text('详情'),
-                backgroundColor: Color(AppColors.APP_ThEME),
+                backgroundColor: Color(AppColors.APP_THEME),
                 centerTitle: true,
-                brightness: Brightness.dark,
+                systemOverlayStyle: SystemUiOverlayStyle.dark,
                 titleSpacing: NavigationToolbar.kMiddleSpacing,
                 toolbarOpacity: 1.0,
                 bottomOpacity: 1.0,
@@ -81,13 +83,13 @@ class _MicroClassifyDetailPageState extends State<MicroClassifyDetailPage> {
               ),
         body: ListView(
           children: [
-            data != null
+            controller != null
                 ? Container(
                     height: 220,
                     alignment: Alignment.center,
                     child: Chewie(
                         controller: ChewieController(
-                            videoPlayerController: controller,
+                            videoPlayerController: controller!,
                             aspectRatio: 16 / 9,
                             autoPlay: true,
                             looping: true)),
@@ -95,7 +97,7 @@ class _MicroClassifyDetailPageState extends State<MicroClassifyDetailPage> {
                 : SizedBox(),
             Container(
               margin: EdgeInsets.only(left: 10, right: 10, top: 10),
-              child: Text(data != null ? data['video_title'] : "",
+              child: Text(data?['video_title']?.toString() ?? '',
                   style: TextStyle(
                       color: Color(AppColors.TEXT_BLACK), fontSize: 16),
                   softWrap: true,
@@ -105,7 +107,7 @@ class _MicroClassifyDetailPageState extends State<MicroClassifyDetailPage> {
             Container(
                 margin: EdgeInsets.only(left: 10, top: 5, right: 10),
                 child: Text(
-                    data != null ? "主讲人：${data['video_lecturer']}" : "主讲人：暂无",
+                    "主讲人：${data?['video_lecturer']?.toString() ?? '暂无'}",
                     style: TextStyle(
                         fontSize: 15, color: Color(AppColors.Text_GRAY)),
                     softWrap: true,
@@ -113,7 +115,7 @@ class _MicroClassifyDetailPageState extends State<MicroClassifyDetailPage> {
                     overflow: TextOverflow.ellipsis)),
             Container(
               margin: EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 10),
-              child: Text(data != null ? "简介：${data['video_desc']}" : "简介：暂无",
+              child: Text("简介：${data?['video_desc']?.toString() ?? '暂无'}",
                   style: TextStyle(
                       color: Color(AppColors.TEXT_HINT), fontSize: 14),
                   softWrap: true,

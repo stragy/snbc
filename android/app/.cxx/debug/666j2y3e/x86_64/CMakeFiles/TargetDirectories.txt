@@ -1,0 +1,2 @@
+F:/project_snbc/bct_new/android/app/.cxx/debug/666j2y3e/x86_64/CMakeFiles/edit_cache.dir
+F:/project_snbc/bct_new/android/app/.cxx/debug/666j2y3e/x86_64/CMakeFiles/rebuild_cache.dir

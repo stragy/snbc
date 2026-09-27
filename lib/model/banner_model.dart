@@ -1,14 +1,17 @@
-
 class BannerModel {
-  var class_name;
+  final String? className;
 
-  BannerModel({
-    this.class_name,
-  });
+  const BannerModel({this.className});
 
-  factory BannerModel.fromJSON(Map<String, dynamic> json) {
+  factory BannerModel.fromJson(Map<String, dynamic> json) {
     return BannerModel(
-      class_name: json['class_name'],
+      className: json['class_name'] as String?,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'class_name': className,
+    };
   }
 }

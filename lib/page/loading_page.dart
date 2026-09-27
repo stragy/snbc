@@ -1,21 +1,23 @@
-import 'package:bct_flutter/common/NativeInt.dart';
+import 'package:bct_flutter/common/native_int.dart';
 import 'package:flutter/material.dart';
 
 class LoadingPage extends StatefulWidget {
+  const LoadingPage({super.key});
+
   @override
-  _SplashPageState createState() => _SplashPageState();
+  State<LoadingPage> createState() => _SplashPageState();
 }
 
 class _SplashPageState extends State<LoadingPage> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    Map<String, String> header = Map();
-    EvenInfo("loadingAd", mapInfo: header);
+    Map<String, String> header = {};
+    evenInfo("loadingAd", mapInfo: header);
   }
+
   @override
   Widget build(BuildContext context) {
-   return Container();
+    return Container();
   }
 }

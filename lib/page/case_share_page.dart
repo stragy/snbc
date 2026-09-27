@@ -4,39 +4,31 @@ import 'package:bct_flutter/page/case_share_detail_page.dart';
 import 'package:flutter/material.dart';
 
 class CaseSharePage extends StatefulWidget {
-  CaseSharePage({
-    @required this.id,
-  });
+  const CaseSharePage({super.key, required this.id});
 
-  var id;
+  final dynamic id;
 
   @override
-  _CaseSharePageState createState() => _CaseSharePageState(id: id);
+  State<CaseSharePage> createState() => _CaseSharePageState();
 }
 
 class _CaseSharePageState extends State<CaseSharePage> {
-  _CaseSharePageState({
-    @required this.id,
-  });
-
-  var id;
-  var list;
+  List<dynamic> _list = [];
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getCompany();
   }
 
-  getCompany() async {
-    print(id);
-    FormData formData = new FormData.fromMap({
-      "company_id": id,
+  Future<void> getCompany() async {
+    debugPrint('company_id: ${widget.id}');
+    final formData = FormData.fromMap({
+      "company_id": widget.id,
     });
     await Request.getInstance().post("/diseaseShareList", (data) async {
-      list = data;
-      setState(() {});
+      _list = (data as List);
+      if (mounted) setState(() {});
     }, params: formData);
   }
 
@@ -46,10 +38,11 @@ class _CaseSharePageState extends State<CaseSharePage> {
         removeTop: true,
         context: context,
         child: ListView.builder(
-            itemCount: list != null ? list.length : 0,
+            itemCount: _list.length,
             itemBuilder: (BuildContext context, int index) {
               return GestureDetector(
                 child: Container(
+                  color: Colors.white,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -59,7 +52,7 @@ class _CaseSharePageState extends State<CaseSharePage> {
                           Container(
                             margin: EdgeInsets.only(top: 10, left: 15),
                             child: Text(
-                              list[index]['title'],
+                              _list[index]['title'],
                               maxLines: 2,
                               style: TextStyle(
                                   fontSize: 14,
@@ -69,7 +62,7 @@ class _CaseSharePageState extends State<CaseSharePage> {
                           Container(
                               margin: EdgeInsets.only(top: 10, right: 15),
                               child: Text(
-                                "${list[index]['pv']}人浏览",
+                                "${_list[index]['pv']}人浏览",
                                 style: TextStyle(
                                     fontSize: 10,
                                     color: Color(AppColors.TEXT_HINT)),
@@ -79,7 +72,7 @@ class _CaseSharePageState extends State<CaseSharePage> {
                       Container(
                           margin: EdgeInsets.only(top: 8, left: 15),
                           child: Text(
-                            "医生：${list[index]['doc_name']}  ${list[index]['department']}  ${list[index]['doc_title']}",
+                            "医生：${_list[index]['doc_name']}  ${_list[index]['department']}  ${_list[index]['doc_title']}",
                             style: TextStyle(
                                 fontSize: 12,
                                 color: Color(AppColors.ICON_GRAY)),
@@ -87,7 +80,7 @@ class _CaseSharePageState extends State<CaseSharePage> {
                       Container(
                           margin: EdgeInsets.only(top: 8, left: 15, bottom: 10),
                           child: Text(
-                            "医院：${list[index]['hospital']}",
+                            "医院：${_list[index]['hospital']}",
                             style: TextStyle(
                                 fontSize: 12,
                                 color: Color(AppColors.ICON_GRAY)),
@@ -98,14 +91,13 @@ class _CaseSharePageState extends State<CaseSharePage> {
                       )
                     ],
                   ),
-                  color: Colors.white,
                 ),
                 onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              CaseShareDetailPage(id: list[index]['id'])));
+                              CaseShareDetailPage(id: _list[index]['id'])));
                 },
               );
             }));

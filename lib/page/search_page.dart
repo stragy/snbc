@@ -2,107 +2,117 @@ import 'package:bct_flutter/constants/colors.dart';
 import 'package:bct_flutter/network/network.dart';
 import 'package:bct_flutter/page/widget/course_classify_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter/services.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+
+import 'course_classify_detail_page.dart';
 
 class SearchPage extends StatefulWidget {
-  SearchPage({
-    @required this.keyWord,
+  const SearchPage({
+    super.key,
+    required this.keyWord,
   });
 
-  var keyWord;
+  final String keyWord;
 
   @override
-  _SearchPageState createState() => _SearchPageState(keyWord: keyWord);
+  State<SearchPage> createState() => _SearchPageState();
 }
 
 class _SearchPageState extends State<SearchPage> {
-  _SearchPageState({
-    @required this.keyWord,
-  });
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
-  EasyRefreshController _refreshController = EasyRefreshController();
-
-  var keyWord;
-  var list;
-  var begin=0;
+  List<dynamic> list = [];
+  int begin = 0;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getCourse();
   }
 
-  getCourse() {
-    FormData formData = new FormData.fromMap({
+  Future<void> getCourse() async {
+    FormData formData = FormData.fromMap({
       "begin": begin,
-      "end": begin+20,
-      "keyword": keyWord,
+      "end": begin + 20,
+      "keyword": widget.keyWord,
     });
-    Request.getInstance().post("/course", (data) async {
-      list = data['course'];
+    await Request.getInstance().post("/course", (data) async {
+      list = (data['course'] as List?) ?? [];
       setState(() {});
-      _refreshController.finishRefresh(success: true);
-      _refreshController.finishLoad(
-          success: true, noMore: list.length % 20 != 0);
+      _refreshController.refreshCompleted();
+      if (list.length % 20 != 0) {
+        _refreshController.loadNoData();
+      } else {
+        _refreshController.loadComplete();
+      }
     }, params: formData);
   }
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-            backgroundColor: Color(0xfffffffff),
-            appBar: AppBar(
-              elevation: 0,
-              //去掉Appbar底部阴影
-              leading: IconButton(
-                  icon:Image.network(
-                    "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
-                    width: 11,
-                    height: 19,
-                    fit: BoxFit.fill,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
-              automaticallyImplyLeading: true,
-              title: Text('搜索'),
-              backgroundColor: Color(AppColors.APP_ThEME),
-              centerTitle: true,
-              brightness: Brightness.dark,
-              titleSpacing: NavigationToolbar.kMiddleSpacing,
-              toolbarOpacity: 1.0,
-              bottomOpacity: 1.0,
-              primary: true,
-            ),
-            body: MediaQuery.removeViewPadding(
-                removeTop: true,
-                context: context,
-                child: Container(
-                  margin: EdgeInsets.only(top: 10),
-                  child: EasyRefresh(
-                    header: MaterialHeader(),
-                    footer: MaterialFooter(),
-                    controller: _refreshController,
-                    enableControlFinishRefresh: true,
-                    enableControlFinishLoad: true,
-                    child: ListView.builder(
-                        itemCount: list != null ? list.length : 0,
-                        itemBuilder: (BuildContext context, int index) {
-                          return CourseClassifyWidget(data: list[index]);
-                        }),
-                    onLoad: () {
-                      begin++;
-                      getCourse();
-                    },
-                    onRefresh: () {
-                      begin = 0;
-
-                      getCourse();
-                    },
-                  ),
-                )));
+    return Scaffold(
+        backgroundColor: const Color(0xFFFFFFFF),
+        appBar: AppBar(
+          elevation: 0,
+          //去掉Appbar底部阴影
+          leading: IconButton(
+              icon: Image.network(
+                "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
+                width: 11,
+                height: 19,
+                fit: BoxFit.fill,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
+          automaticallyImplyLeading: true,
+          title: Text('搜索'),
+          backgroundColor: Color(AppColors.APP_THEME),
+          centerTitle: true,
+          titleSpacing: NavigationToolbar.kMiddleSpacing,
+          toolbarOpacity: 1.0,
+          bottomOpacity: 1.0,
+          primary: true, systemOverlayStyle: SystemUiOverlayStyle.light,
+        ),
+        body: MediaQuery.removeViewPadding(
+            removeTop: true,
+            context: context,
+            child: Container(
+              margin: EdgeInsets.only(top: 10),
+              child: SmartRefresher(
+                header: ClassicHeader(),
+                footer: ClassicFooter(),
+                controller: _refreshController,
+                enablePullDown: true,
+                enablePullUp: true,
+                child: ListView.builder(
+                    itemCount: list.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return InkWell(
+                        child: CourseClassifyWidget(data: list[index]),
+                        onTap: () {
+                          pushPage(CourseClassifyDetailPage(
+                              id: list[index]['course_id']));
+                        },
+                      );
+                    }),
+                onLoading: () async {
+                  begin++;
+                  await getCourse();
+                },
+                onRefresh: () async {
+                  begin = 0;
+                  await getCourse();
+                },
+              ),
+            )));
   }
+
+  void pushPage(Widget page) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+  }
+
   @override
   void dispose() {
     _refreshController.dispose();

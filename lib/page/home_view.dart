@@ -1,40 +1,47 @@
 import 'package:bct_flutter/constants/colors.dart';
 import 'package:bct_flutter/model/banner_model.dart';
 import 'package:bct_flutter/network/network.dart';
-import 'package:bct_flutter/page/about_page.dart';
 import 'package:bct_flutter/page/course_classify_detail_page.dart';
 import 'package:bct_flutter/page/course_classify_page.dart';
 import 'package:bct_flutter/page/search_page.dart';
 import 'package:bct_flutter/page/widget/home_search_card.dart';
+import 'package:bct_flutter/utils/event_bus.dart';
 import 'package:bct_flutter/utils/ui_util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_pangle_ads/view/ad_banner_widget.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:card_swiper/card_swiper.dart';
 
 class HomeView extends StatefulWidget {
+  const HomeView({super.key});
+
   @override
-  _HomeViewState createState() => _HomeViewState();
+  State<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
-  TextEditingController _keywordTextEditingController = TextEditingController();
-  FocusNode _focus = new FocusNode();
-  var banner_images;
-  List<BannerModel> mTabs = new List();
-  TabController _tabController;
-
-  int _selectedIndex;
+  final TextEditingController _keywordTextEditingController =
+      TextEditingController();
+  final FocusNode _focus = FocusNode();
+  List<dynamic>? bannerImages;
+  List<BannerModel> mTabs = <BannerModel>[];
+  TabController? _tabController;
+  var bus = EventBus();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _tabController = TabController(vsync: this, length: mTabs.length);
-    _tabController.addListener(() {
-      setState(() => _selectedIndex = _tabController.index);
-      print("liucheng-> ${_tabController.indexIsChanging}");
+    _tabController!.addListener(() {
+      setState(() {});
+      debugPrint('liucheng-> ${_tabController!.indexIsChanging}');
     });
 
+    // 测试网络连接
+    debugPrint('🚀 HomeView 初始化开始');
+    _testAndLoadData();
+  }
+
+  Future<void> _testAndLoadData() async {
+    // 直接加载数据，不做额外网络测试（避免不必要的请求）
     getCourse();
     getClass();
   }
@@ -42,138 +49,151 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
   @override
   void dispose() {
     super.dispose();
-    _tabController.dispose();
+    _tabController?.dispose();
   }
 
   // 轮播图
-  getCourse() async {
-    FormData formData = new FormData.fromMap({
-      "begin": 0,
-      "end": 20,
-      "keyword": "",
-    });
-    await Request.getInstance().post("/course", (data) async {
-      setState(() {
-        banner_images = data['banner'];
+  Future<void> getCourse() async {
+    try {
+      FormData formData = FormData.fromMap({
+        "begin": 0,
+        "end": 20,
+        "keyword": "",
       });
-    }, params: formData);
+      debugPrint('🔍 开始请求课程轮播图数据...');
+      await Request.getInstance().post("/course", (data) async {
+        debugPrint('✅ 课程轮播图数据请求成功');
+        debugPrint('📊 Banner数据: ${data['banner']}');
+        if (!mounted) return;
+        setState(() {
+          bannerImages = data['banner'];
+        });
+      }, params: formData, errorCallBack: (error) {
+        debugPrint('❌ 课程轮播图请求失败: $error');
+      }, silent: true);
+    } catch (e) {
+      debugPrint('❌ getCourse 异常: $e');
+    }
   }
 
-  getClass() async {
-    FormData formData = new FormData.fromMap({
-      "begin": 0,
-      "end": 20,
-      "keyword": "",
-    });
-    await Request.getInstance().post("/getClass", (data) async {
-      mTabs = (data['course_class'] as List)
-          .map((item) => BannerModel.fromJSON(item))
-          .toList();
-      mTabs.insert(0, new BannerModel(class_name: "全部"));
-      setState(() {
-        _tabController = TabController(vsync: this, length: mTabs.length);
+  Future<void> getClass() async {
+    try {
+      FormData formData = FormData.fromMap({
+        "begin": 0,
+        "end": 20,
+        "keyword": "",
       });
-    }, params: formData);
+      debugPrint('🔍 开始请求课程分类数据...');
+      await Request.getInstance().post("/getClass", (data) async {
+        debugPrint('✅ 课程分类数据请求成功');
+        debugPrint('📊 分类数量: ${data['course_class']?.length ?? 0}');
+        mTabs = (data['course_class'] as List)
+            .map((item) => BannerModel.fromJson(item))
+            .toList();
+        mTabs.insert(0, BannerModel(className: "全部"));
+        if (mounted) {
+          setState(() {
+            _tabController = TabController(vsync: this, length: mTabs.length);
+          });
+        }
+      }, params: formData, errorCallBack: (error) {
+        debugPrint('❌ 课程分类请求失败: $error');
+      }, silent: true);
+    } catch (e) {
+      debugPrint('❌ getClass 异常: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
-      backgroundColor: Colors.white,
+        backgroundColor: Colors.white,
         body: Column(
-      children: [
-      MediaQuery.removePadding(context: context, child:     Container(
-          color: Color(AppColors.APP_ThEME),
-          padding: EdgeInsets.only(right: 10, left: 10, top: 35,bottom: 5),
-          child: HomeSearchCardWidget(
-            elevation: 0,
-            onTap: () {
-            },
-            onSubmitted: (String str) {
-              FocusScope.of(context).unfocus();
-            _keywordTextEditingController.text = '';
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => SearchPage(keyWord:str)));
-            },
-            onChanged: (String str) {
-            },
-            textEditingController: _keywordTextEditingController,
-            focusNode: _focus,
-          ))),
-        swiper(),
-        AdBannerWidget(
-          height: 75,
-          posId: "953317270",
-        ),
-
-        PreferredSize(
-            preferredSize: Size(double.infinity, 30),//设置高度为30
-            child: Container(
-              height: 35,
-              margin: EdgeInsets.only(bottom: 10),
-              child: TabBar(
-                indicatorColor: Color(AppColors.APP_ThEME),
-                labelColor: Color(AppColors.APP_ThEME),
-                unselectedLabelColor: Color(AppColors.TEXT_BLACK),
-                indicatorWeight: 2.0,
-                isScrollable: true,
-                unselectedLabelStyle: TextStyle(fontSize: 15),
-                       labelPadding: EdgeInsetsDirectional.only(start: 20,end: 20),
-                labelStyle: TextStyle(fontSize: 15),
-                // indicator: MyUnderlineTabIndicator(borderSide:  BorderSide(width: 2.0, color: MyColorRes.primaryColor)),
-                controller: _tabController,
-                tabs: mTabs.map((value) {
-                  return Text(value.class_name);
-                }).toList(),
-              )
+          children: [
+            MediaQuery.removePadding(
+                context: context,
+                child: Container(
+                    color: Color(AppColors.APP_THEME),
+                    padding: EdgeInsets.only(
+                        right: 10, left: 10, top: 35, bottom: 5),
+                    child: HomeSearchCardWidget(
+                      elevation: 0,
+                      onTap: () {},
+                      onSubmitted: (String str) {
+                        FocusScope.of(context).unfocus();
+                        _keywordTextEditingController.text = '';
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    SearchPage(keyWord: str)));
+                      },
+                      onChanged: (String str) {},
+                      textEditingController: _keywordTextEditingController,
+                      focusNode: _focus,
+                    ))),
+            swiper(),
+            PreferredSize(
+                preferredSize: Size(double.infinity, 30), //设置高度为30
+                child: Container(
+                    height: 35,
+                    margin: EdgeInsets.only(bottom: 10),
+                    child: TabBar(
+                      indicatorColor: Color(AppColors.APP_THEME),
+                      labelColor: Color(AppColors.APP_THEME),
+                      unselectedLabelColor: Color(AppColors.TEXT_BLACK),
+                      indicatorWeight: 2.0,
+                      isScrollable: true,
+                      unselectedLabelStyle: TextStyle(fontSize: 15),
+                      labelPadding:
+                          EdgeInsetsDirectional.only(start: 20, end: 20),
+                      labelStyle: TextStyle(fontSize: 15),
+                      controller: _tabController,
+                      tabs: mTabs.map((value) {
+                        return Text(value.className ?? '');
+                      }).toList(),
+                    ))),
+            Expanded(
+                child: TabBarView(
+              controller: _tabController,
+              children: _buildPages(),
             ))
-       ,
-        Expanded(child: TabBarView(
-          controller: this._tabController,
-          children: _buildPages(),
-        ))
-
-      ],
-    ));
+          ],
+        ));
   }
 
   List<Widget> _buildPages() {
-    List<Widget> pages = List();
+    List<Widget> pages = <Widget>[];
     for (int i = 0; i < mTabs.length; i++) {
-      Widget page = CourseClassifyPage(classa: mTabs[i].class_name);
+      Widget page = CourseClassifyPage(classa: mTabs[i].className ?? '');
       pages.add(page);
     }
     return pages;
   }
 
   Widget swiper() {
-
-    return new Container(
+    return SizedBox(
       width: DeviceUtils.sreenWidth(context),
       height: DeviceUtils.sreenWidth(context) * 0.38,
-      child: banner_images != null && banner_images.length > 0
+      child: bannerImages != null && bannerImages!.isNotEmpty
           ? Swiper(
               itemBuilder: _swiperBuilder,
-              itemCount: banner_images != null && banner_images.length > 0
-                  ? banner_images.length
-                  : 0,
+              itemCount: bannerImages?.length ?? 0,
               scrollDirection: Axis.horizontal,
               autoplay: true,
-        pagination: new SwiperPagination(
-            builder: DotSwiperPaginationBuilder(
-              color: Color(AppColors.TEXT_HINT),
-              activeColor: Color(AppColors.APP_ThEME),
-              size: 7,
-              activeSize: 7,
-            )),
-              // viewportFraction: 0.86,
-              // scale: 0.92,
+              pagination: SwiperPagination(
+                  builder: DotSwiperPaginationBuilder(
+                color: Color(AppColors.TEXT_HINT),
+                activeColor: Color(AppColors.APP_THEME),
+                size: 7,
+                activeSize: 7,
+              )),
               onTap: (index) {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => CourseClassifyDetailPage(id: banner_images[index]['course_id'])));
+                        builder: (context) => CourseClassifyDetailPage(
+                            id: bannerImages![index]['course_id'])));
               },
             )
           : SizedBox(),
@@ -184,7 +204,7 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
     return (ClipRRect(
       borderRadius: BorderRadius.circular(0),
       child: Image.network(
-        banner_images[index]['img'],
+        bannerImages![index]['img'],
         fit: BoxFit.fill,
       ),
     ));
@@ -194,12 +214,12 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
 class StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
   final TabBar child;
 
-  StickyTabBarDelegate({@required this.child});
+  StickyTabBarDelegate({required this.child});
 
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return this.child;
+    return child;
   }
 
   @override

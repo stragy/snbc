@@ -1,17 +1,12 @@
-import 'dart:async';
-
+import 'package:bct_flutter/constants/app_assets.dart';
 import 'package:bct_flutter/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:fluwx/fluwx.dart';
-import 'package:fluwx/fluwx.dart' as fluwx;
+// import 'package:fluwx/fluwx.dart' as fluwx;
 
 // ignore: must_be_immutable
 class DialogShare extends StatefulWidget {
-  DialogShare({
-    Key key,
-    this.url
-
-  }) : super(key: key);
+  const DialogShare({super.key, this.url = ''});
   final String url;
 
   @override
@@ -26,86 +21,83 @@ class _DialogShare extends State<DialogShare> {
 
   @override
   Widget build(BuildContext context) {
-    return new StatefulBuilder(
+    return StatefulBuilder(
       builder: (context, state) {
-        return new Container(
+        return SizedBox(
           height: 176,
-          child: new Column(
+          child: Column(
             children: <Widget>[
               Container(
                 margin: EdgeInsets.only(top: 15, bottom: 15),
                 child: Text(
                   "选择要使用的应用",
                   style: TextStyle(
-                      color: Color(AppColors.TEXT_BLACK),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16),
+                    color: Color(AppColors.TEXT_BLACK),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
                 ),
               ),
-              new Row(
+              Row(
                 children: <Widget>[
                   GestureDetector(
-                    child: new Container(
+                    child: Container(
                       margin: EdgeInsets.only(top: 15, left: 15, bottom: 5),
-                      child: new Column(
+                      child: Column(
                         children: <Widget>[
-                          Image.network("http://snbc.zglcwl.com/Public/fontImages/wechat_img.png",
+                          Image.asset(
+                            AppAssets.wechatImg,
                             width: 52,
                             height: 52,
                             fit: BoxFit.fill,
                           ),
                           Container(
-                            margin: EdgeInsets.only(
-                              top: 5,
-                            ),
+                            margin: EdgeInsets.only(top: 5),
                             child: Text(
                               "微信",
                               style: TextStyle(
-                                  fontSize: 12,
-                                  color: Color(AppColors.TEXT_BLACK),
+                                fontSize: 12,
+                                color: Color(AppColors.TEXT_BLACK),
+                              ),
                             ),
-                          ))
+                          ),
                         ],
                       ),
                     ),
                     onTap: () {
-                      _share(widget.url, "神农百草",
-                          WeChatScene.SESSION);
+                      _share(widget.url, "神农百草", WeChatScene.session);
                     },
                   ),
                   GestureDetector(
-                    child: new Container(
+                    child: Container(
                       margin: EdgeInsets.only(top: 10, left: 30),
-                      child: new Column(
+                      child: Column(
                         children: <Widget>[
-                          Image.network("http://snbc.zglcwl.com/Public/fontImages/circle_of_friends.png",
+                          Image.asset(
+                            AppAssets.circleOfFriends,
                             width: 52,
                             height: 52,
                             fit: BoxFit.fill,
                           ),
                           Container(
-                            margin: EdgeInsets.only(
-                              top: 5,
-                            ),
+                            margin: EdgeInsets.only(top: 5),
                             child: Text(
                               "朋友圈",
                               style: TextStyle(
-                                  fontSize: 12,
-                                  color: Color(AppColors.TEXT_BLACK)),
+                                fontSize: 12,
+                                color: Color(AppColors.TEXT_BLACK),
+                              ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
                     onTap: () {
-                      _share(
-                          widget.url,
-                          "神农百草",
-                          WeChatScene.TIMELINE);
+                      _share(widget.url, "神农百草", WeChatScene.timeline);
                     },
-                  )
+                  ),
                 ],
-              )
+              ),
             ],
           ),
         );
@@ -113,15 +105,21 @@ class _DialogShare extends State<DialogShare> {
     );
   }
 
-  void _share(String url, String title,  WeChatScene scene) {
-    var model = fluwx.WeChatShareWebPageModel(
-        webPage: url,
-        title: title,
-        scene: scene,
-        transaction: "hh");
-    fluwx.shareToWeChat(model);
-//    fluwx.responseFromShare.listen((data){
-//      Fluttertoast.showToast(msg:  data.errCode.toString()+"  "+data.errStr.toString());
-//    });
+  Future<void> _share(String url, String title, WeChatScene scene) async {
+    // Temporarily disabled for web platform
+    debugPrint("WeChat share not available on web platform");
+    debugPrint("URL: $url, Title: $title, Scene: $scene");
+    
+    // var model = fluwx.WeChatShareWebPageModel(
+    //   url,
+    //   title: title,
+    //   description: title,
+    //   scene: scene,
+    // );
+    // try {
+    //   await fluwx.share(model);
+    // } catch (e) {
+    //   debugPrint("WeChat share failed: $e");
+    // }
   }
 }

@@ -1,56 +1,48 @@
 import 'package:bct_flutter/constants/colors.dart';
-import 'package:bct_flutter/model/article_model.dart';
 import 'package:bct_flutter/model/enterprise_model.dart';
 import 'package:bct_flutter/network/network.dart';
 import 'package:bct_flutter/page/case_share_page.dart';
-import 'package:bct_flutter/page/course_classify_detail_page.dart';
 import 'package:bct_flutter/page/web_page.dart';
 import 'package:bct_flutter/utils/ui_util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:card_swiper/card_swiper.dart';
 
 import 'market_survey_page.dart';
 import 'micro_class_detail_page.dart';
 import 'micro_class_page.dart';
 
 class EnterpriseInformationPage extends StatefulWidget {
-  EnterpriseInformationPage({
-    @required this.id,
+  const EnterpriseInformationPage({
+    super.key,
+    required this.id,
   });
 
-  var id;
+  final dynamic id;
 
   @override
-  _EnterpriseInformationPageState createState() =>
-      _EnterpriseInformationPageState(id: id);
+  State<EnterpriseInformationPage> createState() =>
+      _EnterpriseInformationPageState();
 }
 
 class _EnterpriseInformationPageState extends State<EnterpriseInformationPage>
     with SingleTickerProviderStateMixin {
-  EnterpriseZoneModel model = new EnterpriseZoneModel();
-  TabController tabController;
-
-  _EnterpriseInformationPageState({
-    @required this.id,
-  });
-
-  var id;
+  EnterpriseZoneModel model = EnterpriseZoneModel();
+  late TabController tabController;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     tabController = TabController(vsync: this, length: 3);
 
     getCompany();
   }
 
-  getCompany() async {
-    FormData formData = new FormData.fromMap({
-      "id": id,
+  Future<void> getCompany() async {
+    FormData formData = FormData.fromMap({
+      "id": widget.id,
     });
     await Request.getInstance().post("/company", (data) async {
-      model = EnterpriseZoneModel.fromJSON(data);
+      model = EnterpriseZoneModel.fromJson(data);
       setState(() {});
     }, params: formData);
   }
@@ -59,9 +51,10 @@ class _EnterpriseInformationPageState extends State<EnterpriseInformationPage>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color(AppColors.APP_ThEME),
+          backgroundColor: Color(AppColors.APP_THEME),
           leading: IconButton(
-              icon:  Image.network( "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
+              icon: Image.network(
+                "http://snbc.zglcwl.com/Public/fontImages/top_back_btn.png",
                 width: 11,
                 height: 19,
                 fit: BoxFit.fill,
@@ -82,7 +75,7 @@ class _EnterpriseInformationPageState extends State<EnterpriseInformationPage>
         body: Column(
           children: [
             Container(
-              color: Color(AppColors.APP_ThEME),
+              color: Color(AppColors.APP_THEME),
               padding: EdgeInsets.only(bottom: 5),
               child: Column(
                 children: [
@@ -92,50 +85,48 @@ class _EnterpriseInformationPageState extends State<EnterpriseInformationPage>
                       Row(
                         children: [
                           Container(
+                            margin:
+                                EdgeInsets.only(left: 10, right: 10, top: 15),
                             child: ClipRRect(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(30)),
-                              child: model != null && model.head != null
-                                  ? Image.network( model.head,
+                              child: model.head != null
+                                  ? Image.network(
+                                      model.head!,
                                       width: 55,
                                       height: 55,
                                     )
                                   : SizedBox(),
                             ),
-                            margin:
-                                EdgeInsets.only(left: 10, right: 10, top: 15),
                           ),
                           Container(
-                            child: Text(
-                                model != null && model.head != null
-                                    ? model.name
-                                    : "",
+                            margin: EdgeInsets.only(top: 10),
+                            child: Text(model.head != null ? (model.name ?? '') : "",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w300,
                                     fontSize: 18,
                                     fontFamily: 'PingFang')),
-                            margin: EdgeInsets.only(top: 10),
                           ),
                         ],
                       ),
                       GestureDetector(
                         child: Container(
-                          decoration: new BoxDecoration(
+                          decoration: BoxDecoration(
                             //背景
-                            color: Color(AppColors.TEXT_WIT),
+                            color: Color(AppColors.TEXT_WHITE),
                             //设置四周圆角 角度
                             borderRadius:
                                 BorderRadius.all(Radius.circular(30.0)),
                           ),
-                          child: Text("企业风采",
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  color: Color(AppColors.APP_ThEME))),
                           margin:
                               EdgeInsets.only(right: 15, top: 18, bottom: 10),
                           padding: EdgeInsets.only(
                               left: 8, right: 8, top: 2, bottom: 2),
+                          child: Text("企业风采",
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  color: Color(AppColors.APP_THEME))),
                         ),
                         onTap: () {
                           Navigator.push(
@@ -143,7 +134,7 @@ class _EnterpriseInformationPageState extends State<EnterpriseInformationPage>
                               MaterialPageRoute(
                                   builder: (context) => WebPage(
                                         name: "企业风采",
-                                        url: model.style,
+                                        url: model.style ?? '',
                                         isShare: true,
                                       )));
                         },
@@ -157,7 +148,7 @@ class _EnterpriseInformationPageState extends State<EnterpriseInformationPage>
             TabBar(
               controller: tabController,
               labelColor: Colors.black,
-              indicatorColor: Color(AppColors.APP_ThEME),
+              indicatorColor: Color(AppColors.APP_THEME),
               tabs: <Widget>[
                 Tab(text: '在线微课堂'),
                 Tab(text: '市场调研'),
@@ -168,11 +159,11 @@ class _EnterpriseInformationPageState extends State<EnterpriseInformationPage>
                 child: TabBarView(
               controller: tabController,
               children: <Widget>[
-                new MicroClassPage(
-                  id: id,
+                MicroClassPage(
+                  id: widget.id,
                 ),
-                MarketSurveyPage(id: id),
-                CaseSharePage(id: id),
+                MarketSurveyPage(id: widget.id),
+                CaseSharePage(id: widget.id),
               ],
             ))
           ],
@@ -180,34 +171,35 @@ class _EnterpriseInformationPageState extends State<EnterpriseInformationPage>
   }
 
   Widget swiper() {
-    return new Container(
+    return Container(
       width: DeviceUtils.sreenWidth(context),
       height: DeviceUtils.sreenWidth(context) * 0.34,
       margin: EdgeInsets.only(top: 15, left: 10, right: 10),
-      child: model.banner != null && model.banner.length > 0
+      child: model.banner != null && model.banner!.length > 0
           ? Swiper(
               itemBuilder: _swiperBuilder,
-              itemCount: model.banner != null && model.banner.length > 0
-                  ? model.banner.length
+              itemCount: model.banner != null && model.banner!.length > 0
+                  ? model.banner!.length
                   : 0,
               scrollDirection: Axis.horizontal,
               autoplay: true,
-              pagination: new SwiperPagination(
+              pagination: SwiperPagination(
                   builder: DotSwiperPaginationBuilder(
                 color: Color(AppColors.TEXT_HINT),
-                activeColor: Color(AppColors.APP_ThEME),
+                activeColor: Color(AppColors.APP_THEME),
                 size: 7,
                 activeSize: 7,
               )),
               // viewportFraction: 0.86,
               // scale: 0.92,
               onTap: (index) {
-                if(model.banner[index]['link'].toString().isNotEmpty)
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => MicroClassifyDetailPage(
-                            id: model.banner[index]['link'])));
+                if (model.banner?[index]['link'].toString().isNotEmpty ?? false) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MicroClassifyDetailPage(
+                              id: model.banner?[index]['link'])));
+                }
               },
             )
           : SizedBox(),
@@ -218,7 +210,7 @@ class _EnterpriseInformationPageState extends State<EnterpriseInformationPage>
     return (ClipRRect(
       borderRadius: BorderRadius.circular(8),
       child: Image.network(
-        model.banner[index]['img'],
+        model.banner?[index]['img'] ?? '',
         fit: BoxFit.fill,
       ),
     ));
@@ -228,19 +220,19 @@ class _EnterpriseInformationPageState extends State<EnterpriseInformationPage>
 class StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
   final TabBar child;
 
-  StickyTabBarDelegate({@required this.child});
+  StickyTabBarDelegate({required this.child});
 
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return this.child;
+    return child;
   }
 
   @override
-  double get maxExtent => this.child.preferredSize.height;
+  double get maxExtent => child.preferredSize.height;
 
   @override
-  double get minExtent => this.child.preferredSize.height;
+  double get minExtent => child.preferredSize.height;
 
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {

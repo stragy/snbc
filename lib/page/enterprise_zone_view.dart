@@ -2,43 +2,49 @@ import 'package:bct_flutter/constants/colors.dart';
 import 'package:bct_flutter/model/enterprise_model.dart';
 import 'package:bct_flutter/network/network.dart';
 import 'package:bct_flutter/page/enterprise_information_page.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:bct_flutter/utils/event_bus.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_easyrefresh/easy_refresh.dart';
-import 'package:flutter_pangle_ads/view/ad_banner_widget.dart';
+import 'package:flutter/services.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 //企业专区
 class EnterpriseZoneView extends StatefulWidget {
+  const EnterpriseZoneView({super.key});
+
   @override
-  _EnterpriseZoneViewState createState() => _EnterpriseZoneViewState();
+  State<EnterpriseZoneView> createState() => _EnterpriseZoneViewState();
 }
 
 class _EnterpriseZoneViewState extends State<EnterpriseZoneView> {
   int begin = 0;
-  List<EnterpriseZoneModel> list = new List();
-  EasyRefreshController _refreshController = EasyRefreshController();
+  List<EnterpriseZoneModel> list = <EnterpriseZoneModel>[];
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
+  var bus = EventBus();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getCompany();
   }
 
-  getCompany() async {
-    FormData formData = new FormData.fromMap({
+  Future<void> getCompany() async {
+    FormData formData = FormData.fromMap({
       "page": begin,
       "pagesize": 20,
     });
     await Request.getInstance().post("/companyList", (data) async {
       setState(() {
         list = (data as List)
-            .map((item) => EnterpriseZoneModel.fromJSON(item))
+            .map((item) => EnterpriseZoneModel.fromJson(item))
             .toList();
       });
-      _refreshController.finishRefresh(success: true);
-      _refreshController.finishLoad(
-          success: true, noMore: list.length % 20 != 0);
+      _refreshController.refreshCompleted();
+      if (list.length % 20 != 0) {
+        _refreshController.loadNoData();
+      } else {
+        _refreshController.loadComplete();
+      }
     }, params: formData);
   }
 
@@ -50,38 +56,33 @@ class _EnterpriseZoneViewState extends State<EnterpriseZoneView> {
         elevation: 0,
         //去掉Appbar底部阴影
 
-        automaticallyImplyLeading: true,
+        automaticallyImplyLeading: false,
         title: Text('企业专区'),
-        backgroundColor: Color(AppColors.APP_ThEME),
+        backgroundColor: Color(AppColors.APP_THEME),
         centerTitle: true,
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         titleSpacing: NavigationToolbar.kMiddleSpacing,
         toolbarOpacity: 1.0,
         bottomOpacity: 1.0,
         primary: true,
+        leading: null,
       ),
       body: Column(
         children: [
-          AdBannerWidget(
-            width: 320,
-            height: 120,
-            autoClose: false,
-            posId: "953318196",
-          ),
           Expanded(
-              child: EasyRefresh(
-            header: MaterialHeader(),
-            footer: MaterialFooter(),
+              child: SmartRefresher(
+            header: ClassicHeader(),
+            footer: ClassicFooter(),
             controller: _refreshController,
-            enableControlFinishRefresh: true,
-            enableControlFinishLoad: true,
+            enablePullDown: true,
+            enablePullUp: true,
             child: ListView.builder(
                 itemCount: list.length,
                 itemBuilder: (BuildContext context, int index) {
                   return InkWell(
                     child: Container(
                       margin: EdgeInsets.only(top: 10, left: 10, right: 10),
-                      decoration: new BoxDecoration(
+                      decoration: BoxDecoration(
                         //背景
                         color: Colors.white,
                         //设置四周圆角 角度
@@ -93,12 +94,13 @@ class _EnterpriseZoneViewState extends State<EnterpriseZoneView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                child: Image.network(list[index].head,
+                                margin: EdgeInsets.only(
+                                    left: 10, right: 10, top: 15),
+                                child: Image.network(
+                                  list[index].head ?? '',
                                   width: 55,
                                   height: 43,
                                 ),
-                                margin: EdgeInsets.only(
-                                    left: 10, right: 10, top: 15),
                               ),
                               Expanded(
                                   child: Column(
@@ -109,28 +111,24 @@ class _EnterpriseZoneViewState extends State<EnterpriseZoneView> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Container(
+                                        margin: EdgeInsets.only(
+                                            top: 15, bottom: 10),
                                         child: Text(
-                                          list[index].name,
+                                          list[index].name ?? '',
                                           style: TextStyle(
                                               fontSize: 16,
                                               color: Color(AppColors.BLACK)),
                                         ),
-                                        margin: EdgeInsets.only(
-                                            top: 15, bottom: 10),
                                       ),
                                       GestureDetector(
                                         child: Container(
-                                          decoration: new BoxDecoration(
+                                          decoration: BoxDecoration(
                                             //背景
-                                            color: Color(AppColors.APP_ThEME),
+                                            color: Color(AppColors.APP_THEME),
                                             //设置四周圆角 角度
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(30.0)),
                                           ),
-                                          child: Text("进入专区",
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  color: Colors.white)),
                                           margin: EdgeInsets.only(
                                               right: 15, top: 15, bottom: 10),
                                           padding: EdgeInsets.only(
@@ -138,16 +136,19 @@ class _EnterpriseZoneViewState extends State<EnterpriseZoneView> {
                                               right: 8,
                                               top: 2,
                                               bottom: 2),
+                                          child: Text("进入专区",
+                                              style: TextStyle(
+                                                  fontSize: 13,
+                                                  color: Colors.white)),
                                         ),
                                         onTap: () {
-                                          this.pushPage(
-                                              EnterpriseInformationPage(
-                                                  id: list[index].id));
+                                          pushPage(EnterpriseInformationPage(
+                                              id: list[index].id));
                                         },
                                       )
                                     ],
                                   ),
-                                  Text(list[index].introduction,
+                                  Text(list[index].introduction ?? '',
                                       style: TextStyle(
                                           fontSize: 14,
                                           color: Color(AppColors.ICON_GRAY))),
@@ -156,11 +157,12 @@ class _EnterpriseZoneViewState extends State<EnterpriseZoneView> {
                             ],
                           ),
                           Container(
-                            child: Image.network(list[index].img,
-                              height: 130,
-                            ),
                             margin: EdgeInsets.only(
                                 left: 10, right: 10, top: 10, bottom: 10),
+                            child: Image.network(
+                              list[index].img ?? '',
+                              height: 130,
+                            ),
                           )
                         ],
                       ),
@@ -168,14 +170,13 @@ class _EnterpriseZoneViewState extends State<EnterpriseZoneView> {
                     onTap: () {},
                   );
                 }),
-            onLoad: () {
+            onLoading: () async {
               begin++;
-              getCompany();
+              await getCompany();
             },
-            onRefresh: () {
+            onRefresh: () async {
               begin = 0;
-
-              getCompany();
+              await getCompany();
             },
           ))
         ],

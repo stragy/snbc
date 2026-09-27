@@ -1,54 +1,55 @@
-import 'dart:convert';
-
 import 'package:bct_flutter/constants/colors.dart';
 import 'package:bct_flutter/network/network.dart';
 import 'package:bct_flutter/page/widget/choose_dialog_template.dart';
 import 'package:bct_flutter/utils/DataUtils.dart';
-import 'package:bct_flutter/utils/EventBus.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:bct_flutter/utils/event_bus.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:flutter_picker/flutter_picker.dart';
-import 'package:flutter_screenutil/screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:flutter/cupertino.dart';
+
+import 'package:flutter/services.dart';
+
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+// import 'package:image_picker/image_picker.dart';
 
 import 'login_page.dart';
 
 typedef _DateClickCallBack = void Function(
     dynamic selectDateStr, dynamic selectData);
-typedef _StringClickCallBack = void Function(int selectIndex, Object selectStr);
+typedef _StringClickCallBack = void Function(
+    int selectIndex, Object? selectStr);
 
 const double _kPickerHeight = 216.0;
-const double _kItemHeigt = 40.0;
-const Color _kBtnColor = Color(0xFF323232);
+
 const Color _kTitleColor = Color(0xFF787878);
 const double _kTextFontSize = 17.0;
 
 class UserInfoPage extends StatefulWidget {
+  const UserInfoPage({super.key});
+
   @override
-  _UserInfoPageState createState() => _UserInfoPageState();
+  State<UserInfoPage> createState() => _UserInfoPageState();
 }
 
 class _UserInfoPageState extends State<UserInfoPage> {
-  var userinfo;
-  var _imgPath;
+  dynamic userinfo;
+  String? _imgPath;
   var bus = EventBus();
-  var birth;
-  var sex;
-  var nickName;
+  String? birth;
+  String? sex;
+  String? nickName;
   bool isClose = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getUserInfo();
   }
 
-  getUserInfo() {
+  void getUserInfo() {
     DataUtils.getUserId().then((value) {
-      FormData formData = new FormData.fromMap({
+      FormData formData = FormData.fromMap({
         "user_id": value,
       });
       Request.getInstance().post("/personal", (data) async {
@@ -82,12 +83,12 @@ class _UserInfoPageState extends State<UserInfoPage> {
         actions: <Widget>[
           GestureDetector(
             child: Container(
+              alignment: Alignment.center,
+              margin: EdgeInsets.only(right: 15),
               child: Text(
                 "保存",
                 style: TextStyle(fontSize: 16, color: Colors.white),
               ),
-              alignment: Alignment.center,
-              margin: EdgeInsets.only(right: 15),
             ),
             onTap: () {
               isClose = true;
@@ -98,9 +99,9 @@ class _UserInfoPageState extends State<UserInfoPage> {
 
         automaticallyImplyLeading: true,
         title: Text('个人信息'),
-        backgroundColor: Color(AppColors.APP_ThEME),
+        backgroundColor: Color(AppColors.APP_THEME),
         centerTitle: true,
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         titleSpacing: NavigationToolbar.kMiddleSpacing,
         toolbarOpacity: 1.0,
         bottomOpacity: 1.0,
@@ -172,10 +173,10 @@ class _UserInfoPageState extends State<UserInfoPage> {
                                               ),
                                       ),
                                     ),
-                                    Image.network("http://snbc.zglcwl.com/Public/fontImages/button_next.png",
+                                    Image.network(
+                                      "http://snbc.zglcwl.com/Public/fontImages/button_next.png",
                                       width: 16,
                                       height: 16,
-
                                     )
                                   ],
                                 ))),
@@ -227,15 +228,15 @@ class _UserInfoPageState extends State<UserInfoPage> {
                                 Container(
                                   margin: EdgeInsets.only(right: 5),
                                   child: Text(
-                                    nickName != null ? nickName : "",
+                                    nickName ?? "",
                                     style: TextStyle(
                                         color: Color(AppColors.TEXT_HINT),
                                         fontSize: ScreenUtil().setSp(28),
                                         decoration: TextDecoration.none),
                                   ),
                                 ),
-                                Image.network(                                      "http://snbc.zglcwl.com/Public/fontImages/button_next.png",
-
+                                Image.network(
+                                  "http://snbc.zglcwl.com/Public/fontImages/button_next.png",
                                   width: 16,
                                   height: 16,
                                 )
@@ -276,9 +277,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                       flex: 1,
                       child: InkWell(
                         onTap: () {
-                          List<String> data = new List();
-                          data.add("女");
-                          data.add("男");
+                          List<String> data = <String>["女", "男"];
                           showStringPicker(context, data: data,
                               clickCallBack: (int position, var time) {
                             sex = data[position];
@@ -296,15 +295,15 @@ class _UserInfoPageState extends State<UserInfoPage> {
                                 Container(
                                   margin: EdgeInsets.only(right: 5),
                                   child: Text(
-                                    sex != null ? sex : "",
+                                    sex ?? "",
                                     style: TextStyle(
                                         color: Color(AppColors.TEXT_HINT),
                                         fontSize: ScreenUtil().setSp(28),
                                         decoration: TextDecoration.none),
                                   ),
                                 ),
-                                Image.network(                                      "http://snbc.zglcwl.com/Public/fontImages/button_next.png",
-
+                                Image.network(
+                                  "http://snbc.zglcwl.com/Public/fontImages/button_next.png",
                                   width: 16,
                                   height: 16,
                                 )
@@ -345,7 +344,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                       flex: 1,
                       child: InkWell(
                         onTap: () {
-                          showDatePicker(context,
+                          showDatePickerDialog(context,
                               clickCallBack: (var str, var time) {
                             birth = str;
                             setState(() {});
@@ -362,17 +361,17 @@ class _UserInfoPageState extends State<UserInfoPage> {
                                 Container(
                                   margin: EdgeInsets.only(right: 5),
                                   child: Text(
-                                    birth != null ? birth : "",
+                                    birth ?? "",
                                     style: TextStyle(
                                         color: Color(AppColors.TEXT_HINT),
                                         fontSize: ScreenUtil().setSp(28),
                                         decoration: TextDecoration.none),
                                   ),
                                 ),
-                                Image.network(  "http://snbc.zglcwl.com/Public/fontImages/button_next.png",
+                                Image.network(
+                                  "http://snbc.zglcwl.com/Public/fontImages/button_next.png",
                                   width: 16,
                                   height: 16,
-
                                 )
                               ],
                             )),
@@ -395,7 +394,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                   right: ScreenUtil().setWidth(50)),
               height: ScreenUtil().setWidth(88),
               decoration: BoxDecoration(
-                color: Color(AppColors.APP_ThEME),
+                color: Color(AppColors.APP_THEME),
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               child: Center(
@@ -410,7 +409,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
               ),
             ),
             onTap: () {
-              ChooseDialogTemplate(
+              chooseDialogTemplate(
                   context: context,
                   title: null,
                   contentWidget: Column(
@@ -441,9 +440,9 @@ class _UserInfoPageState extends State<UserInfoPage> {
     );
   }
 
-  logOff() {
+  void logOff() {
     DataUtils.getUserId().then((value) {
-      FormData formData = new FormData.fromMap({
+      FormData formData = FormData.fromMap({
         "user_id": value,
       });
       Request.getInstance().post("/logOff", (data) async {
@@ -456,7 +455,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
     });
   }
 
-  _login() async {
+  Future<void> _login() async {
     // 打开登录页并处理登录成功的回调
     final result =
         await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
@@ -471,59 +470,98 @@ class _UserInfoPageState extends State<UserInfoPage> {
     }
   }
 
-  static void showStringPicker<T>(
+  static Future<void> showStringPicker<T>(
     BuildContext context, {
-    @required List<T> data,
-    String title,
-    int normalIndex,
-    PickerDataAdapter adapter,
-    @required _StringClickCallBack clickCallBack,
-  }) {
-    openModalPicker(context,
-        adapter: adapter ?? PickerDataAdapter(pickerdata: data, isArray: false),
-        clickCallBack: (Picker picker, List<int> selecteds) {
-      clickCallBack(selecteds[0], data[selecteds[0]]);
-    }, selecteds: [normalIndex ?? 0], title: title);
-  }
-
-  Future _openModalBottomSheet() async {
-    final option = await showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return Container(
-            height: 200.0,
+    required List<T> data,
+    String? title,
+    int? normalIndex,
+    required _StringClickCallBack clickCallBack,
+  }) async {
+    final int initialIndex =
+        (normalIndex != null && normalIndex >= 0 && normalIndex < data.length)
+            ? normalIndex
+            : 0;
+    final selectedIndex = await showModalBottomSheet<int>(
+      context: context,
+      builder: (ctx) {
+        return SafeArea(
+          child: SizedBox(
+            height: _kPickerHeight + 56,
             child: Column(
-              children: <Widget>[
-                ListTile(
-                  title: Text('拍照', textAlign: TextAlign.center),
-                  onTap: () {
-                    _takePhoto();
-                    Navigator.pop(context, '拍照');
-                  },
+              children: [
+                Container(
+                  height: 56,
+                  alignment: Alignment.center,
+                  child: Text(title ?? '请选择',
+                      style: TextStyle(
+                          color: _kTitleColor, fontSize: _kTextFontSize)),
                 ),
-                ListTile(
-                  title: Text('从相册选择', textAlign: TextAlign.center),
-                  onTap: () {
-                    _openGallery();
-                    Navigator.pop(context, '从相册选择');
-                  },
-                ),
-                ListTile(
-                  title: Text('取消', textAlign: TextAlign.center),
-                  onTap: () {
-                    Navigator.pop(context, '取消');
-                  },
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: data.length,
+                    itemBuilder: (c, i) {
+                      final selected = i == initialIndex;
+                      return ListTile(
+                        title: Text(
+                          '${data[i]}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: selected ? Colors.black : Colors.black87),
+                        ),
+                        onTap: () => Navigator.pop(ctx, i),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
+    if (selectedIndex != null) {
+      clickCallBack(selectedIndex, data[selectedIndex]);
+    }
+  }
 
-    print(option);
+  Future _openModalBottomSheet() async {
+    // final option = await showModalBottomSheet(
+    //     context: context,
+    //     builder: (BuildContext context) {
+    //       return Container(
+    //         height: 200.0,
+    //         child: Column(
+    //           children: <Widget>[
+    //             ListTile(
+    //               title: Text('拍照', textAlign: TextAlign.center),
+    //               onTap: () {
+    //                 _takePhoto();
+    //                 Navigator.pop(context, '拍照');
+    //               },
+    //             ),
+    //             ListTile(
+    //               title: Text('从相册选择', textAlign: TextAlign.center),
+    //               onTap: () {
+    //                 _openGallery();
+    //                 Navigator.pop(context, '从相册选择');
+    //               },
+    //             ),
+    //             ListTile(
+    //               title: Text('取消', textAlign: TextAlign.center),
+    //               onTap: () {
+    //                 Navigator.pop(context, '取消');
+    //               },
+    //             ),
+    //           ],
+    //         ),
+    //       );
+    //     });
+    //
+    // print(option);
   }
 
   void showNameAlertDialog(BuildContext context, name) {
-    TextEditingController _nameController = new TextEditingController(); //昵称
+    TextEditingController nameController = TextEditingController(); //昵称
     showDialog<Null>(
         context: context,
         barrierDismissible: false,
@@ -533,11 +571,11 @@ class _UserInfoPageState extends State<UserInfoPage> {
               '修改昵称',
               textAlign: TextAlign.center,
             ),
-            content: Container(
+            content: SizedBox(
               width: 100,
               height: 50,
               child: TextField(
-                controller: _nameController,
+                controller: nameController,
                 autofocus: true,
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
@@ -551,16 +589,16 @@ class _UserInfoPageState extends State<UserInfoPage> {
               ),
             ),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                   onPressed: () {
-                    if (_nameController.text.length != 0) {
+                    if (nameController.text.isNotEmpty) {
                       Navigator.pop(context);
-                      nickName = _nameController.text;
+                      nickName = nameController.text;
                       setState(() {});
                     }
                   },
                   child: Text('确认')),
-              FlatButton(
+              TextButton(
                   onPressed: () {
                     Navigator.pop(context);
                     setState(() {});
@@ -571,40 +609,40 @@ class _UserInfoPageState extends State<UserInfoPage> {
         });
   }
 
-  /*拍照*/
-  _takePhoto() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
-    if (image == null) {
-      return;
-    }
-    DataUtils.imageCompressToFile(image).then((imageurl) {
-      FlutterImageCompress.compressWithFile(imageurl.absolute.path, quality: 20)
-          .then((imageBytes) {
-        _imgPath = base64Encode(imageBytes);
-      });
-    });
-    save();
-  }
+  // /*拍照*/
+  // _takePhoto() async {
+  //   var image = await ImagePicker.pickImage(source: ImageSource.camera);
+  //   if (image == null) {
+  //     return;
+  //   }
+  //   DataUtils.imageCompressToFile(image).then((imageurl) {
+  //     FlutterImageCompress.compressWithFile(imageurl.absolute.path, quality: 20)
+  //         .then((imageBytes) {
+  //       _imgPath = base64Encode(imageBytes);
+  //     });
+  //   });
+  //   save();
+  // }
+  //
+  // /*相册*/
+  // _openGallery() async {
+  //   var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+  //   if (image == null) {
+  //     return;
+  //   }
+  //   DataUtils.imageCompressToFile(image).then((imageurl) {
+  //     FlutterImageCompress.compressWithFile(imageurl.absolute.path, quality: 20)
+  //         .then((imageBytes) {
+  //       _imgPath = base64Encode(imageBytes);
+  //     });
+  //   });
+  //   save();
+  // }
 
-  /*相册*/
-  _openGallery() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    if (image == null) {
-      return;
-    }
-    DataUtils.imageCompressToFile(image).then((imageurl) {
-      FlutterImageCompress.compressWithFile(imageurl.absolute.path, quality: 20)
-          .then((imageBytes) {
-        _imgPath = base64Encode(imageBytes);
-      });
-    });
-    save();
-  }
-
-  save() {
-    print(_imgPath);
+  void save() {
+    debugPrint('$_imgPath');
     DataUtils.getUserId().then((value) {
-      FormData formData = new FormData.fromMap({
+      FormData formData = FormData.fromMap({
         "user_id": value,
         "head": _imgPath,
         "nickname": nickName,
@@ -614,115 +652,102 @@ class _UserInfoPageState extends State<UserInfoPage> {
       Request.getInstance().post("/personalModify", (data) async {
         setState(() {
           bus.send("updateui", "8");
-          if (isClose)
+          if (isClose) {
             Navigator.pop(context, "refresh");
-          else
+          } else {
             getUserInfo();
+          }
         });
       }, params: formData);
     });
   }
 
-  //日期选择器
-  static void showDatePicker(
+  // 日期/时间选择（底部弹出，使用 CupertinoDatePicker）
+  static Future<void> showDatePickerDialog(
     BuildContext context, {
-    DateType dateType,
-    String title,
-    DateTime maxValue,
-    DateTime minValue,
-    DateTime value,
-    DateTimePickerAdapter adapter,
-    @required _DateClickCallBack clickCallBack,
-  }) {
-    int timeType;
-    if (dateType == DateType.YM) {
-      timeType = PickerDateTimeType.kYM;
-    } else if (dateType == DateType.YMD_HM) {
-      timeType = PickerDateTimeType.kYMDHM;
-    } else if (dateType == DateType.YMD_AP_HM) {
-      timeType = PickerDateTimeType.kYMD_AP_HM;
-    } else {
-      timeType = PickerDateTimeType.kYMD;
+    DateType? dateType,
+    String? title,
+    DateTime? maxValue,
+    DateTime? minValue,
+    DateTime? value,
+    required _DateClickCallBack clickCallBack,
+  }) async {
+    DateTime temp = value ?? DateTime.now();
+    final picked = await showModalBottomSheet<DateTime>(
+      context: context,
+      builder: (ctx) {
+        return SafeArea(
+          child: SizedBox(
+            height: _kPickerHeight + 56,
+            child: Column(
+              children: [
+                Container(
+                  height: 56,
+                  alignment: Alignment.center,
+                  child: Text(title ?? '请选择',
+                      style: TextStyle(
+                          color: _kTitleColor, fontSize: _kTextFontSize)),
+                ),
+                Expanded(
+                  child: CupertinoDatePicker(
+                    mode: (dateType == DateType.ym)
+                        ? CupertinoDatePickerMode.date
+                        : (dateType == DateType.ymdHm ||
+                                dateType == DateType.ymdApHm)
+                            ? CupertinoDatePickerMode.dateAndTime
+                            : CupertinoDatePickerMode.date,
+                    initialDateTime: temp,
+                    minimumDate: minValue,
+                    maximumDate: maxValue,
+                    use24hFormat: true,
+                    onDateTimeChanged: (dt) => temp = dt,
+                  ),
+                ),
+                SizedBox(
+                  height: 56,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TextButton(
+                          onPressed: () => Navigator.pop(ctx),
+                          child: const Text('取消')),
+                      TextButton(
+                          onPressed: () => Navigator.pop(ctx, temp),
+                          child: const Text('确定')),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+    if (picked == null) return;
+    final d = picked;
+    String timeStr;
+    switch (dateType) {
+      case DateType.ym:
+        timeStr = '${d.year}-${d.month}-';
+        break;
+      case DateType.ymdHm:
+        timeStr = '${d.year}-${d.month}-${d.day}日${d.hour}时${d.minute}分';
+        break;
+      case DateType.ymdApHm:
+        timeStr = '${d.year}-${d.month}-${d.day}';
+        break;
+      case DateType.ymd:
+      default:
+        timeStr = '${d.year}-${d.month}-${d.day}';
+        break;
     }
-    openModalPicker(context,
-        adapter: adapter ??
-            DateTimePickerAdapter(
-              type: timeType,
-              isNumberMonth: true,
-              yearSuffix: "年",
-              monthSuffix: "月",
-              daySuffix: "日",
-              strAMPM: const ["上午", "下午"],
-              maxValue: maxValue,
-              minValue: minValue,
-              value: value ?? DateTime.now(),
-            ),
-        title: title, clickCallBack: (Picker picker, List<int> selecteds) {
-      var time = (picker.adapter as DateTimePickerAdapter).value;
-      var timeStr;
-      if (dateType == DateType.YM) {
-        timeStr = time.year.toString() + "-" + time.month.toString() + "-";
-      } else if (dateType == DateType.YMD_HM) {
-        timeStr = time.year.toString() +
-            "-" +
-            time.month.toString() +
-            "-" +
-            time.day.toString() +
-            "日" +
-            time.hour.toString() +
-            "时" +
-            time.minute.toString() +
-            "分";
-      } else if (dateType == DateType.YMD_AP_HM) {
-        timeStr = time.year.toString() +
-            "-" +
-            time.month.toString() +
-            "-" +
-            time.day.toString();
-      } else {
-        timeStr = time.year.toString() +
-            "-" +
-            time.month.toString() +
-            "-" +
-            time.day.toString();
-      }
-      clickCallBack(timeStr, picker.adapter.text);
-    });
-  }
-
-  static void openModalPicker(
-    BuildContext context, {
-    @required PickerAdapter adapter,
-    String title,
-    List<int> selecteds,
-    @required PickerConfirmCallback clickCallBack,
-  }) {
-    new Picker(
-            adapter: adapter,
-            title: new Text(
-              title ?? "请选择",
-              style: TextStyle(color: _kTitleColor, fontSize: _kTextFontSize),
-            ),
-            selecteds: selecteds,
-            cancelText: '取消',
-            confirmText: "确定",
-            cancelTextStyle:
-                TextStyle(color: _kBtnColor, fontSize: _kTextFontSize),
-            confirmTextStyle:
-                TextStyle(color: _kBtnColor, fontSize: _kTextFontSize),
-            textAlign: TextAlign.right,
-            itemExtent: _kItemHeigt,
-            height: _kPickerHeight,
-            selectedTextStyle: TextStyle(color: Colors.black),
-            onConfirm: clickCallBack)
-        .showModal(context);
+    clickCallBack(timeStr, d);
   }
 }
 
 enum DateType {
-  YMD, // y,m,d
-  YM, // y,m
-  YMD_HM, //y,m,d,hh,mm
-  YMD_AP_HM, //y,m,d,ap,hh,mm
-
+  ymd, // y,m,d
+  ym, // y,m
+  ymdHm, //y,m,d,hh,mm
+  ymdApHm, //y,m,d,ap,hh,mm
 }

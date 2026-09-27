@@ -1,16 +1,15 @@
-
 abstract class AppColors {
-  static const APP_ThEME = 0xff00a578;
+  static const APP_THEME = 0xff00a578;
   static const Text_GRAY = 0xFF666666;
-  static const bg_GRAY = 0xFFE6E6E6;
-  static const BANTOU_BG = 0x90000000;
-  static const TEXT_WIT = 0xFFFFFFFF;
+  static const BG_GRAY = 0xFFE6E6E6;
+  static const OVERLAY_BG = 0x90000000;
+  static const TEXT_WHITE = 0xFFFFFFFF;
   static const HOME_BG = 0xFFF5F6FA;
   static const BLACK = 0xFF333333;
   static const TEXT_HINT = 0xFF999999;
-  static const APP_ThEME1 = 0xFF5583FF;
+  static const APP_THEME_LIGHT = 0xFF5583FF;
   static const WARN_BG = 0xFFFF8849;
-  static const TEXT_se = 0xFF808080;
+  static const TEXT_GRAY_MEDIUM = 0xFF808080;
   static const RED_BG = 0xFFE25343;
   static const RED_72 = 0xFF72BE2F;
   static const ALERT_BG = 0xFFFFF9E5;
@@ -50,4 +49,6 @@ abstract class AppColors {
   static const ICON_F5 = 0xFFF5F6FA;
   static const TEXT_4949 = 0xFFFF4949;
   static const BG_GREY = 0xFFF5F6FA;
+  // 添加缺失的颜色定义
+  static const APP_TEXT_999 = 0xFF999999;
 }

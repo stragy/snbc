@@ -1,0 +1,2 @@
+G:/products/project_snbc/bct_new/android/app/.cxx/release/1s4p1i18/armeabi-v7a/CMakeFiles/edit_cache.dir
+G:/products/project_snbc/bct_new/android/app/.cxx/release/1s4p1i18/armeabi-v7a/CMakeFiles/rebuild_cache.dir

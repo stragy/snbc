@@ -1,27 +1,46 @@
 buildscript {
     repositories {
+        // 使用阿里云镜像
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        // 备用源
         google()
-        jcenter()
+        mavenCentral()
     }
-
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.0'
+        classpath 'com.android.tools.build:gradle:8.9.1' // 已升级 AGP 到 8.9.1 以兼容 androidx.activity 1.11.0，确保 wrapper 为 8.10+
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10" // 保持 Kotlin 插件兼容
     }
 }
 
 allprojects {
     repositories {
+        // 官方 Flutter 仓库（优先，确保引擎依赖可下载）
+        maven { url 'https://storage.googleapis.com/download.flutter.io' }
+        // 穿山甲广告 SDK 仓库
+        maven { url 'https://artifact.bytedance.com/repository/pangle' }
+        // 使用阿里云镜像
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        // 备用源
         google()
-        jcenter()
+        mavenCentral()
+    }
+
+    // 强制统一所有子项目的 NDK 版本，防止插件声明的版本与本地不一致
+    afterEvaluate { project ->
+        if (project.hasProperty("android")) {
+            project.android {
+                ndkVersion "27.0.12077973"
+            }
+        }
     }
 }
 
 rootProject.buildDir = '../build'
-subprojects {
-    project.buildDir = "${rootProject.buildDir}/${project.name}"
-    project.evaluationDependsOn(':app')
-}
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+tasks.register("clean", Delete) {
+    delete rootProject.layout.buildDirectory
 }

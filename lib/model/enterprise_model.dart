@@ -1,12 +1,11 @@
-
 class EnterpriseZoneModel {
-  var id;
-  var name;
-  var head;
-  var img;
-  var style;
-  var introduction;
-  var banner;
+  final int? id;
+  final String? name;
+  final String? head;
+  final String? img;
+  final String? style;
+  final String? introduction;
+  final List<dynamic>? banner;
 
   EnterpriseZoneModel({
     this.id,
@@ -15,18 +14,30 @@ class EnterpriseZoneModel {
     this.img,
     this.style,
     this.introduction,
-    this.banner
+    this.banner,
   });
 
-  factory EnterpriseZoneModel.fromJSON(Map<String, dynamic> json) {
+  factory EnterpriseZoneModel.fromJson(Map<String, dynamic> json) {
     return EnterpriseZoneModel(
-      id: json['id'],
-      name: json['name'],
-      head: json['head'],
-      img: json['img'],
-      style: json['style'],
-      banner: json['banner'],
-      introduction: json['introduction'],
+      id: json['id'] as int?,
+      name: json['name'] as String?,
+      head: json['head'] as String?,
+      img: json['img'] as String?,
+      style: json['style'] as String?,
+      introduction: json['introduction'] as String?,
+      banner: json['banner'] as List<dynamic>?,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'head': head,
+      'img': img,
+      'style': style,
+      'introduction': introduction,
+      'banner': banner,
+    };
   }
 }

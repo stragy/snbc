@@ -1,48 +1,69 @@
+import 'package:bct_flutter/common/ads_config.dart';
+import 'package:bct_flutter/constants/app_assets.dart';
 import 'package:bct_flutter/constants/colors.dart';
 import 'package:bct_flutter/model/article_model.dart';
 import 'package:bct_flutter/network/network.dart';
-import 'package:bct_flutter/network/request.dart';
 import 'package:bct_flutter/page/academic_information_detail_page.dart';
-import 'package:bct_flutter/utils/ui_util.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:bct_flutter/utils/event_bus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyrefresh/easy_refresh.dart';
-import 'package:flutter_pangle_ads/view/ad_banner_widget.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_pangle_ads/flutter_pangle_ads.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 //学术资料
 class AcademicInformationView extends StatefulWidget {
+  const AcademicInformationView({super.key});
+
   @override
-  _AcademicInformationViewState createState() =>
+  State<AcademicInformationView> createState() =>
       _AcademicInformationViewState();
 }
 
 class _AcademicInformationViewState extends State<AcademicInformationView> {
   int begin = 0;
-  List<ArticleModel> list = new List();
-  EasyRefreshController _refreshController = EasyRefreshController();
+  List<ArticleModel> list = <ArticleModel>[];
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
+  final bus = EventBus();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getArtile();
   }
 
-  getArtile() async {
-    FormData formData = new FormData.fromMap({
+  Future<void> getArtile() async {
+    FormData formData = FormData.fromMap({
       "begin": begin,
       "end": 20,
     });
     await Request.getInstance().post("/article", (data) async {
       setState(() {
         list = (data['article'] as List)
-            .map((item) => ArticleModel.fromJSON(item))
+            .map((item) => ArticleModel.fromJson(item))
             .toList();
       });
-      _refreshController.finishRefresh(success: true);
-      _refreshController.finishLoad(
-          success: true, noMore: list.length % 20 != 0);
+      _refreshController.refreshCompleted();
+      if (list.length % 20 != 0) {
+        _refreshController.loadNoData();
+      } else {
+        _refreshController.loadComplete();
+      }
     }, params: formData);
+  }
+
+  /// 展示激励视频广告
+  Future<void> showRewardVideoAd() async {
+    try {
+      bool result = await FlutterPangleAds.showRewardVideoAd(
+        AdsConfig.rewardVideoId,
+        customData: 'customData',
+        userId: 'userId',
+      );
+      debugPrint("展示激励视频广告${result ? '成功' : '失败'}");
+    } on PlatformException catch (e) {
+      debugPrint(
+          "展示激励视频广告失败 code:${e.code} msg:${e.message} details:${e.details}");
+    }
   }
 
   @override
@@ -50,43 +71,59 @@ class _AcademicInformationViewState extends State<AcademicInformationView> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        automaticallyImplyLeading: true,
-        title: Text('学术资料'),
-        backgroundColor: Color(AppColors.APP_ThEME),
+        automaticallyImplyLeading: false,
+        title: const Text('学术资料'),
+        backgroundColor: Color(AppColors.APP_THEME),
         centerTitle: true,
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light, // 替换 brightness
         titleSpacing: NavigationToolbar.kMiddleSpacing,
         toolbarOpacity: 1.0,
         bottomOpacity: 1.0,
         primary: true,
+        actions: [
+          // Web 平台不支持穿山甲插件，隐藏广告入口
+          if (AdsConfig.isAdSupported)
+            InkWell(
+              child: Container(
+                margin: const EdgeInsets.only(right: 10),
+                child: const Text("激励广告"),
+                alignment: Alignment.center,
+              ),
+              onTap: () async {
+                await showRewardVideoAd();
+              },
+            )
+        ],
       ),
       body: Column(
         children: [
-          AdBannerWidget(
-            width: 300,
-            height: 75,
-            interval: 30,
-            show: true,
-            posId: "953318189",
-          ),
+          if (AdsConfig.isAdSupported)
+            AdBannerWidget(
+              width: 300,
+              height: 75,
+              interval: 30,
+              show: true,
+              posId: AdsConfig.bannerId,
+            ),
           Expanded(
-              child: EasyRefresh(
-            header: MaterialHeader(),
-            footer: MaterialFooter(),
+              child: SmartRefresher(
+            header: ClassicHeader(),
+            footer: ClassicFooter(),
             controller: _refreshController,
-            enableControlFinishRefresh: true,
-            enableControlFinishLoad: true,
+            enablePullDown: true,
+            enablePullUp: true,
             child: ListView.builder(
                 itemCount: list.length,
                 itemBuilder: (BuildContext context, int index) {
                   return InkWell(
                     child: Container(
-                      margin: EdgeInsets.only(left: 15, right: 15),
+                      margin: const EdgeInsets.only(left: 15, right: 15),
                       child: Column(
                         children: [
                           Row(
                             children: [
-                              Image.network(list[index].article_img,
+                              Image.network(
+                                list[index].articleImg ?? '',
                                 width: 100,
                                 height: 70,
                               ),
@@ -96,8 +133,8 @@ class _AcademicInformationViewState extends State<AcademicInformationView> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Container(
-                                    margin: EdgeInsets.only(left: 10),
-                                    child: Text(list[index].article_title,
+                                    margin: const EdgeInsets.only(left: 10),
+                                    child: Text(list[index].articleTitle ?? '',
                                         style: TextStyle(
                                             color: Color(AppColors.TEXT_BLACK),
                                             fontSize: 16),
@@ -106,14 +143,14 @@ class _AcademicInformationViewState extends State<AcademicInformationView> {
                                         overflow: TextOverflow.ellipsis),
                                   ),
                                   Container(
-                                      margin:
-                                          EdgeInsets.only(left: 10, top: 15),
+                                      margin: const EdgeInsets.only(
+                                          left: 10, top: 15),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            "主讲：${list[index].article_lecturer}",
+                                            "主讲：${list[index].articleLecturer}",
                                             style: TextStyle(
                                                 fontSize: 14,
                                                 color:
@@ -123,15 +160,13 @@ class _AcademicInformationViewState extends State<AcademicInformationView> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.end,
                                             children: [
-                                              Container(
-                                                child: Image.network(  "http://snbc.zglcwl.com/Public/fontImages/eyes.png",
-                                                  width: 20,
-                                                  height: 20,
-                                                  fit: BoxFit.fill,
-
-                                                ),
+                                              Image.asset(
+                                                AppAssets.eyes,
+                                                width: 20,
+                                                height: 20,
+                                                fit: BoxFit.fill,
                                               ),
-                                              Text("${list[index].article_see}",
+                                              Text("${list[index].articleSee}",
                                                   style: TextStyle(
                                                       fontSize: 12,
                                                       color: Color(
@@ -145,30 +180,30 @@ class _AcademicInformationViewState extends State<AcademicInformationView> {
                             ],
                           ),
                           Container(
-                            child: Divider(
+                            margin: const EdgeInsets.only(top: 10, bottom: 10),
+                            child: const Divider(
                               height: 1,
                               color: Color(AppColors.BG_EE),
                             ),
-                            margin: EdgeInsets.only(top: 10, bottom: 10),
                           )
                         ],
                       ),
                     ),
                     onTap: () {
-                      this.pushPage(AcademicInformationDetailPage(
-                          id: list[index].article_id));
+                      pushPage(AcademicInformationDetailPage(
+                          id: list[index].articleId));
                     },
                   );
                 }),
-            onRefresh: () {
+            onRefresh: () async {
               begin = 0;
-              getArtile();
+              await getArtile();
             },
-            onLoad: () {
+            onLoading: () async {
               begin++;
-              getArtile();
+              await getArtile();
             },
-          ))
+          )),
         ],
       ),
     );

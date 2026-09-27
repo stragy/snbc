@@ -29,7 +29,18 @@
 .packages
 .pub-cache/
 .pub/
+
+# Build outputs (all platforms/nesting levels)
 /build/
+**/build/
+
+# Local machine config (SDK paths)
+/android/local.properties
+/android/key.properties
+
+# Gradle wrapper distribution archives (re-downloaded automatically by the
+# wrapper; 200MB+ each, exceed GitHub's 100MB per-file limit)
+/android/gradle/wrapper/*.zip
 
 # Web related
 lib/generated_plugin_registrant.dart
@@ -44,3 +55,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# FVM Version Cache
+.fvm/

@@ -6,35 +6,30 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class MarketSurveyPage extends StatefulWidget {
-  MarketSurveyPage({
-    @required this.id,
+  const MarketSurveyPage({
+    super.key,
+    required this.id,
   });
 
-  var id;
+  final dynamic id;
 
   @override
-  _MarketSurveyPageState createState() => _MarketSurveyPageState(id: id);
+  State<MarketSurveyPage> createState() => _MarketSurveyPageState();
 }
 
 class _MarketSurveyPageState extends State<MarketSurveyPage> {
-  _MarketSurveyPageState({
-    @required this.id,
-  });
-
-  var id;
-  var list;
+  dynamic list;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getCompany();
   }
 
-  getCompany() async {
-    print(id);
-    FormData formData = new FormData.fromMap({
-      "company_id": id,
+  Future<void> getCompany() async {
+    debugPrint('${widget.id}');
+    FormData formData = FormData.fromMap({
+      "company_id": widget.id,
     });
     await Request.getInstance().post("/questionnaireList", (data) async {
       setState(() {
@@ -59,21 +54,19 @@ class _MarketSurveyPageState extends State<MarketSurveyPage> {
                       height: 60,
                       margin: EdgeInsets.only(
                           left: 15, top: 10, bottom: 10, right: 10),
-                      child: Image.network( list[index]['head'],
+                      child: Image.network(
+                        list[index]['head'],
                         fit: BoxFit.cover,
                       ),
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          child: Text(
-                            list[index]['name'],
-                            maxLines: 2,
-                            style: TextStyle(
-                                fontSize: 14,
-                                color: Color(AppColors.TEXT_BLACK)),
-                          ),
+                        Text(
+                          list[index]['name'],
+                          maxLines: 2,
+                          style: TextStyle(
+                              fontSize: 14, color: Color(AppColors.TEXT_BLACK)),
                         ),
                         Container(
                             margin: EdgeInsets.only(top: 20),
@@ -87,28 +80,29 @@ class _MarketSurveyPageState extends State<MarketSurveyPage> {
                     )
                   ],
                 ),
-                onTap: () {
-                  var url;
+                onTap: () async {
+                  // Capture the local BuildContext to avoid using State.context across async gaps
+                  final localContext = context;
+                  String url;
                   if (list[index]['can_use'] == 1) {
-                    DataUtils.isLogin().then((isLogin) {
-                      if (isLogin) {
-                        DataUtils.getPhone().then((value) {
-                          url =
-                              "http://snbc.zglcwl.com/diseaseCase/index-question.html?id=" +
-                                  list[index]['id'] +
-                                  "&tel="+value;
-                        });
-                      } else {
-                        url =
-                            "http://snbc.zglcwl.com/diseaseCase/index-question.html?id=" +
-                                list[index]['id'];
-                      }
-                    });
+                    final isLogin = await DataUtils.isLogin();
+                    if (isLogin) {
+                      final value = await DataUtils.getPhone();
+                      url =
+                          "http://snbc.zglcwl.com/diseaseCase/index-question.html?id=${list[index]['id']}&tel=$value";
+                    } else {
+                      url =
+                          "http://snbc.zglcwl.com/diseaseCase/index-question.html?id=${list[index]['id']}";
+                    }
+                    // Guard navigation with the BuildContext's mounted check (Flutter 3.7+)
+                    if (!localContext.mounted) return;
                     Navigator.push(
-                        context,
+                        localContext,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                WebPage(name: list[index]['name'], url: url,isShare: true)));
+                            builder: (ctx) => WebPage(
+                                name: list[index]['name'],
+                                url: url,
+                                isShare: true)));
                   } else {
                     Fluttertoast.showToast(msg: "不在参与时间内");
                   }

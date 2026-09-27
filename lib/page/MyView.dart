@@ -1,31 +1,34 @@
+// ignore_for_file: file_names
+import 'package:bct_flutter/constants/app_assets.dart';
 import 'package:bct_flutter/constants/colors.dart';
 import 'package:bct_flutter/network/network.dart';
 import 'package:bct_flutter/page/register_page.dart';
 import 'package:bct_flutter/page/userinfo_page.dart';
+import 'package:bct_flutter/page/web_page.dart';
 import 'package:bct_flutter/page/widget/choose_dialog_template.dart';
 import 'package:bct_flutter/page/widget/list_cell.dart';
 import 'package:bct_flutter/utils/DataUtils.dart';
-import 'package:bct_flutter/utils/EventBus.dart';
+import 'package:bct_flutter/utils/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'about_page.dart';
-import 'download_page1.dart';
 import 'login_page.dart';
 
 class MyView extends StatefulWidget {
+  const MyView({super.key});
+
   @override
-  _MyViewState createState() => _MyViewState();
+  State<MyView> createState() => _MyViewState();
 }
 
 class _MyViewState extends State<MyView> {
   var bus = EventBus();
-  var head, nickname, username;
+  String? head, nickname, username;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     bus.on("updateui", (arg) {
       if (arg == "8") {
@@ -35,19 +38,19 @@ class _MyViewState extends State<MyView> {
     getUserInfo();
   }
 
-  getUserInfo() {
+  void getUserInfo() {
     DataUtils.isLogin().then((value) {
       if (value) {
         DataUtils.getUserId().then((value) {
-          FormData formData = new FormData.fromMap({
+          FormData formData = FormData.fromMap({
             "user_id": value,
           });
           Request.getInstance().post("/personal", (data) async {
-            print(data);
+            debugPrint('$data');
             if (data != null) {
               setState(() {
                 head = data['head'];
-                print(head);
+                debugPrint('$head');
                 username = data['username'];
                 nickname = data['nickname'];
               });
@@ -79,17 +82,16 @@ class _MyViewState extends State<MyView> {
             margin: EdgeInsets.only(bottom: 5),
             height: 200,
             decoration: BoxDecoration(
-              image: new DecorationImage(
+              image: DecorationImage(
                 fit: BoxFit.cover,
-                image: new NetworkImage(
-                    'http://snbc.zglcwl.com/Public/fontImages/head_bg.png'),
+                image: AssetImage(AppAssets.headBg),
               ),
             ),
             child: Column(
               children: [
                 Container(
                   margin: EdgeInsets.only(top: 25),
-                  width: ScreenUtil.screenWidth,
+                  width: 1.sw,
                   height: 60,
                   alignment: Alignment.center,
                   child: Text(
@@ -101,20 +103,20 @@ class _MyViewState extends State<MyView> {
                 Row(
                   children: [
                     Container(
+                      margin: EdgeInsets.only(left: 15, right: 10, top: 15),
                       child: ClipRRect(
                         borderRadius: BorderRadius.all(Radius.circular(28)),
-                        child: Image.network( head != null
-                            ? head
-                            : "http://snbc.zglcwl.com/Public/fontImages/head_dis.png",
-                          width: ScreenUtil().setWidth(100),
-                          height: ScreenUtil().setWidth(100),
+                        child: Image.asset(
+                          head ??
+                              AppAssets.headDis,
+                          width: 100.w,
+                          height: 100.w,
                           fit: BoxFit.fill,
                           //广告图片地址
 //                                            placeholder: (context, url) => _buildSplashBg(),
 //                                            errorWidget: (context, url, error) => _buildSplashBg(),
                         ),
                       ),
-                      margin: EdgeInsets.only(left: 15, right: 10, top: 15),
                     ),
                     Expanded(
                         child: Column(
@@ -123,7 +125,7 @@ class _MyViewState extends State<MyView> {
                         Container(
                           margin: EdgeInsets.only(top: 10),
                           child: Text(
-                            nickname != null ? nickname : "",
+                            nickname ?? "",
                             style: TextStyle(fontSize: 16, color: Colors.white),
                           ),
                         ),
@@ -138,20 +140,20 @@ class _MyViewState extends State<MyView> {
                     )),
                     GestureDetector(
                       child: Container(
-                        child: Image.network(
-                          "http://snbc.zglcwl.com/Public/fontImages/my_next.png",
-                        ),
-                          width: 15,
-                          height: 20,
-
+                        width: 15,
+                        height: 20,
                         margin: EdgeInsets.only(top: 10, right: 15),
+                        child: Image.network(
+                          AppAssets.myNext,
+                        ),
                       ),
                       onTap: () {
                         DataUtils.isLogin().then((value) {
-                          if (value)
-                            this.pushPage(UserInfoPage());
-                          else
+                          if (value) {
+                            pushPage(UserInfoPage());
+                          } else {
                             _login();
+                          }
                         });
                       },
                     )
@@ -163,13 +165,10 @@ class _MyViewState extends State<MyView> {
           Expanded(child: _buildContent()),
           GestureDetector(
             child: Container(
-              margin: EdgeInsets.only(
-                  left: ScreenUtil().setWidth(50),
-                  bottom: 20,
-                  right: ScreenUtil().setWidth(50)),
-              height: ScreenUtil().setWidth(88),
+              margin: EdgeInsets.only(left: 50.w, bottom: 20, right: 50.w),
+              height: 88.w,
               decoration: BoxDecoration(
-                color: Color(AppColors.APP_ThEME),
+                color: Color(AppColors.APP_THEME),
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               child: Center(
@@ -177,16 +176,16 @@ class _MyViewState extends State<MyView> {
                   "退出登录",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: ScreenUtil().setSp(36),
+                    fontSize: 36.sp,
                   ),
                   textAlign: TextAlign.center,
                 ),
               ),
             ),
             onTap: () {
-              ChooseDialogTemplate(
+              chooseDialogTemplate(
                   context: context,
-                  title: null,
+                  title: '',
                   contentWidget: Column(
                     children: <Widget>[
                       Container(
@@ -195,7 +194,7 @@ class _MyViewState extends State<MyView> {
                           '是否退出登录？',
                           style: TextStyle(
                               color: Color(0xFF434343),
-                              fontSize: ScreenUtil().setSp(30),
+                              fontSize: 30.sp,
                               decoration: TextDecoration.none),
                         ),
                       ),
@@ -243,22 +242,22 @@ class _MyViewState extends State<MyView> {
             });
           },
         ),
-        ListCell(
-          icon: "/downloader_img.png",
-          title: '我的下载',
-          isDivider: true,
-          onTap: () {
-            DataUtils.isLogin().then((isLogin) {
-              setState(() {
-                if (isLogin) {
-                  this.pushPage(DownloadPage());
-                } else {
-                  _login();
-                }
-              });
-            });
-          },
-        ),
+        // ListCell(
+        //   icon: "/downloader_img.png",
+        //   title: '我的下载',
+        //   isDivider: true,
+        //   onTap: () {
+        //     DataUtils.isLogin().then((isLogin) {
+        //       setState(() {
+        //         if (isLogin) {
+        //           this.pushPage(DownloadPage());
+        //         } else {
+        //           _login();
+        //         }
+        //       });
+        //     });
+        //   },
+        // ),
         ListCell(
           icon: "/about_img.png",
           title: '关于',
@@ -267,7 +266,7 @@ class _MyViewState extends State<MyView> {
             DataUtils.isLogin().then((isLogin) {
               setState(() {
                 if (isLogin) {
-                  this.pushPage(AboutPage());
+                  pushPage(AboutPage());
                 } else {
                   _login();
                 }
@@ -282,7 +281,7 @@ class _MyViewState extends State<MyView> {
           onTap: () {
             DataUtils.isLogin().then((isLogin) {
               if (isLogin) {
-                FormData formData = new FormData.fromMap({
+                FormData formData = FormData.fromMap({
                   "name": nickname,
                   "tel": username,
                 });
@@ -293,8 +292,8 @@ class _MyViewState extends State<MyView> {
                         toastLength: Toast.LENGTH_SHORT,
                         gravity: ToastGravity.BOTTOM,
                         timeInSecForIosWeb: 1,
-                        fontSize: ScreenUtil().setSp(24),
-                        textColor: Color(AppColors.TEXT_WIT),
+                        fontSize: 24.sp,
+                        textColor: Color(AppColors.TEXT_WHITE),
                         backgroundColor: Color(0xFF000000));
                   });
                 }, params: formData);
@@ -312,12 +311,42 @@ class _MyViewState extends State<MyView> {
             DataUtils.isLogin().then((isLogin) {
               setState(() {
                 if (isLogin) {
-                  this.pushPage(RegisterPage("2"));
+                  pushPage(RegisterPage("2"));
                 } else {
                   _login();
                 }
               });
             });
+          },
+        ),
+        ListCell(
+          icon: "/setting_img.png",
+          title: '用户协议',
+          isDivider: true,
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => WebPage(
+                          name: "用户协议",
+                          url: "http://snbc.zglcwl.com/Public/html/user.html",
+                          isShare: false,
+                        )));
+          },
+        ),
+        ListCell(
+          icon: "/setting_img.png",
+          title: '隐私政策',
+          isDivider: true,
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => WebPage(
+                        name: "隐私政策",
+                        url:
+                            "http://snbc.zglcwl.com/Public/html/agreement.html",
+                        isShare: false)));
           },
         ),
       ],
@@ -328,7 +357,7 @@ class _MyViewState extends State<MyView> {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 
-  _login() async {
+  Future<void> _login() async {
     // 打开登录页并处理登录成功的回调
     final result =
         await Navigator.of(context).push(MaterialPageRoute(builder: (context) {

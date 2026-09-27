@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 
 class HomeSearchCardWidget extends StatefulWidget {
-  final FocusNode focusNode;
-  TextEditingController textEditingController;
-  final VoidCallback onTap;
+  final FocusNode? focusNode;
+  final TextEditingController? textEditingController;
+  final VoidCallback? onTap;
   final bool isShowLeading;
-  final String hintText;
-  final ValueChanged<String> onSubmitted;
-  final ValueChanged<String> onChanged;
+  final String? hintText;
+  final ValueChanged<String>? onSubmitted;
+  final ValueChanged<String>? onChanged;
   final bool autofocus;
   final bool isShowSuffixIcon;
   final double elevation;
-  Widget rightWidget;
-  final Color color;
+  final Widget? rightWidget;
+  final Color? color;
 
-  HomeSearchCardWidget({
-    Key key,
+  const HomeSearchCardWidget({
+    super.key,
     this.focusNode,
     this.textEditingController,
     this.onTap,
@@ -28,101 +28,96 @@ class HomeSearchCardWidget extends StatefulWidget {
     this.elevation = 2.0,
     this.rightWidget,
     this.color,
-  }) : super(key: key);
+  });
 
   @override
-  _HomeSearchCardWidgetState createState() => _HomeSearchCardWidgetState();
+  State<HomeSearchCardWidget> createState() => _HomeSearchCardWidgetState();
 }
 
 class _HomeSearchCardWidgetState extends State<HomeSearchCardWidget> {
-//  TextEditingController textEditingController;
-  String _hintText;
-//  Widget _rightWidget;
+  //  TextEditingController textEditingController;
+  String _hintText = "化学护肤";
+  //  Widget _rightWidget;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-
-//    textEditingController = widget.textEditingController;
+    // 初始化 hint 文本（如有传入则优先使用）
+    _hintText = widget.hintText ?? "化学护肤";
+    // 如需在初始化时根据外部 controller 的初始值触发 onChanged，可在此扩展
   }
 
   @override
   Widget build(BuildContext context) {
-//    if (widget.textEditingController == null) {
-//      widget.textEditingController = TextEditingController();
-//    }
-//    _rightWidget = widget.rightWidget;
-//    _rightWidget ??= Icon(
-//      Icons.camera,
-//      color: Colors.grey,
-//      size: 20,
-//    );
-    _hintText = widget.hintText;
-    _hintText ??= "化学护肤";
-    if (widget.textEditingController == null) {
-      widget.textEditingController = TextEditingController();
-    }
+    //    if (widget.textEditingController == null) {
+    //      widget.textEditingController = TextEditingController();
+    //    }
+    //    _rightWidget = widget.rightWidget;
+    //    _rightWidget ??= Icon(
+    //      Icons.camera,
+    //      color: Colors.grey,
+    //      size: 20,
+    //    );
+    _hintText = widget.hintText ?? "化学护肤";
 
     return searchCard();
   }
 
-  Widget searchCard() =>
-      Padding(
-//    padding: const EdgeInsets.only(top: 8,bottom: 8),
-        padding: const EdgeInsets.only(top: 0, right: 0),
-        child: Card(
-          color: Colors.white38,
-          elevation: widget.elevation,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(15.0))), //设置圆角
-          child: Padding(
-            padding: const EdgeInsets.only(top: 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                widget.isShowLeading
-                    ? Padding(
-                  padding: EdgeInsets.only(right: 5, top: 0, left: 10),
-                  child:  Image.network(
-                    "http://snbc.zglcwl.com/Public/fontImages/search_icon.png",
-                    width: 15,
-                    height: 15,
-                  ),
-                )
-                    : SizedBox(
-                  width: 10,
-                ),
-//               Container(
-//                 color: Colors.red,
-//                 child:
-                Expanded(
-                  child: Container(
-//                     color: Colors.red,
-                  width: 300,
-                      height: 32,
-                      child: TextField(
-                        textInputAction: TextInputAction.search,
-                        autofocus: widget.autofocus,
-                        onTap: widget.onTap,
-                        focusNode: widget.focusNode,
-                        style: TextStyle(fontSize: 12,color: Colors.white),
-                        controller: widget.textEditingController,
-//                        autofocus: true,
-//                    focusNode: _focusNode,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: _hintText,
-                          hintStyle: TextStyle(fontSize: 12,color: Colors.white),
-                          suffixIcon: widget.textEditingController.text
-                              .length == 0 || !widget.isShowSuffixIcon
-                              ? SizedBox()
-                              : Container(
+  Widget searchCard() => Padding(
+    //    padding: const EdgeInsets.only(top: 8,bottom: 8),
+    padding: const EdgeInsets.only(top: 0, right: 0),
+    child: Card(
+      color: Colors.white38,
+      elevation: widget.elevation,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(15.0)),
+      ), //设置圆角
+      child: Padding(
+        padding: const EdgeInsets.only(top: 0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            widget.isShowLeading
+                ? Padding(
+                    padding: EdgeInsets.only(right: 5, top: 0, left: 10),
+                    child: Image.network(
+                      "http://snbc.zglcwl.com/Public/fontImages/search_icon.png",
+                      width: 15,
+                      height: 15,
+                    ),
+                  )
+                : SizedBox(width: 10),
+            //               Container(
+            //                 color: Colors.red,
+            //                 child:
+            Expanded(
+              child: SizedBox(
+                //                     color: Colors.red,
+                width: 300,
+                height: 32,
+                child: TextField(
+                  textInputAction: TextInputAction.search,
+                  autofocus: widget.autofocus,
+                  onTap: widget.onTap,
+                  focusNode: widget.focusNode,
+                  style: TextStyle(fontSize: 12, color: Colors.white),
+                  controller:
+                      (widget.textEditingController ?? TextEditingController()),
+                  //                        autofocus: true,
+                  //                    focusNode: _focusNode,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: _hintText,
+                    hintStyle: TextStyle(fontSize: 12, color: Colors.white),
+                    suffixIcon:
+                        (widget.textEditingController?.text ?? '').isEmpty ||
+                            !widget.isShowSuffixIcon
+                        ? SizedBox()
+                        : SizedBox(
                             width: 20.0,
                             height: 20.0,
-                            alignment: Alignment.centerRight,
-                            child: new IconButton(
+                            child: IconButton(
                               alignment: Alignment.centerRight,
                               padding: const EdgeInsets.only(right: 6),
                               iconSize: 18.0,
@@ -131,39 +126,42 @@ class _HomeSearchCardWidgetState extends State<HomeSearchCardWidget> {
                                 color: Colors.grey[500],
                                 size: 16,
                               ),
-//onPressed: ,
+                              //onPressed: ,
                               onPressed: () {
                                 setState(() {
-//                                  textEditingController.clear();
-                                  widget.textEditingController.text = '';
-                                  widget.onChanged('');
+                                  //                                  textEditingController.clear();
+                                  if (widget.textEditingController != null) {
+                                    widget.textEditingController!.clear();
+                                  }
+                                  widget.onChanged?.call('');
                                 });
-////                                setState(() {
-////                                  _inputText = "";
-////                                  _hasdeleteIcon = (_inputText.isNotEmpty);
-////                                  widget.fieldCallBack(_inputText);
-////                                });
+                                ////                                setState(() {
+                                ////                                  _inputText = "";
+                                ////                                  _hasdeleteIcon = (_inputText.isNotEmpty);
+                                ////                                  widget.fieldCallBack(_inputText);
+                                ////                                });
                               },
                             ),
                           ),
-                        ),
-                        onSubmitted: widget.onSubmitted,
-                        onChanged: widget.onChanged,
-//                      onChanged: (value){
-//                        print('_GZXSearchCardWidgetState.searchCard  ${widget.textEditingController.text}');
-//                      },
-//                     ),
-                      )),
+                  ),
+                  onSubmitted: widget.onSubmitted,
+                  onChanged: widget.onChanged,
+                  //                      onChanged: (value){
+                  //                        print('_GZXSearchCardWidgetState.searchCard  ${widget.textEditingController.text}');
+                  //                      },
+                  //                     ),
                 ),
-
-//                widget.textEditingController.text.length == 0 ||
-//                    !widget.isShowSuffixIcon
-//                    ? Padding(
-//                    padding: EdgeInsets.only(right: 5), child: _rightWidget)
-//                    : SizedBox(),
-              ],
+              ),
             ),
-          ),
+
+            //                widget.textEditingController.text.length == 0 ||
+            //                    !widget.isShowSuffixIcon
+            //                    ? Padding(
+            //                    padding: EdgeInsets.only(right: 5), child: _rightWidget)
+            //                    : SizedBox(),
+          ],
         ),
-      );
+      ),
+    ),
+  );
 }
